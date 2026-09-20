@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AmiCare — Conversational Student Mental Support Platform</title>
+  <meta name="description" content="AmiCare — Conversational non-diagnostic AI Chatbot assistant and confidential helpline referral directory for students." />
+  <link rel="icon" type="image/png" href="/favicon.png?v=4" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico?v=4" />
+  <link rel="shortcut icon" href="/favicon.ico?v=4" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=4" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- React 18 & Babel CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #F4F7F4;
+      --bg-surface: #FFFFFF;
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #FAFCFA;
+
+      --glass-border: #E2E8F0;
+      --glass-border-hover: #2A725D;
+      --glass-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+
+      --primary-teal: #1B4D3E;
+      --primary-light: #2A725D;
+      --primary-glow: rgba(27, 77, 62, 0.12);
+
+      --accent-amber: #D97706;
+      --accent-terracotta: #C2410C;
+
+      --text-main: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #64748B;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+
+      --font-body: 'Inter', -apple-system, sans-serif;
+      --font-heading: 'Outfit', -apple-system, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(42, 114, 93, 0.05) 0%, transparent 45%),
+        radial-gradient(circle at 90% 85%, rgba(217, 119, 6, 0.04) 0%, transparent 45%);
+      background-attachment: fixed;
+    }
+
+    h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.02em; font-weight: 700; color: var(--text-main); }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--glass-shadow);
+      transition: all 0.3s ease;
+    }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 0.9rem 0;
+    }
+    .nav-content { display: flex; justify-content: space-between; align-items: center; }
+    .brand-logo { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text-main); text-decoration: none; }
+    .logo-icon { width: 38px; height: 38px; background: var(--primary-teal); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; }
+    
+    .nav-links { display: flex; gap: 0.4rem; background: #EFEFEF; padding: 0.3rem; border-radius: var(--radius-full); border: 1px solid var(--glass-border); }
+    .nav-btn { background: transparent; border: none; color: var(--text-secondary); padding: 0.55rem 1.1rem; border-radius: var(--radius-full); font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.5rem; }
+    .nav-btn.active, .nav-btn:hover { color: white; background: var(--primary-teal); box-shadow: 0 4px 14px var(--primary-glow); }
+    
+    .emergency-badge { background: #FEF2F2; border: 1px solid #FCA5A5; color: #991B1B; padding: 0.5rem 1rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; gap: 0.45rem; text-decoration: none; }
+
+    .hero-title { font-size: 2.6rem; line-height: 1.18; margin-bottom: 0.85rem; color: var(--text-main); text-align: center; }
+    .hero-subtitle { font-size: 1.08rem; color: var(--text-secondary); max-width: 660px; margin: 0 auto 2rem; text-align: center; }
+    .badge-tag { display: inline-flex; align-items: center; gap: 0.45rem; background: #EBF5F0; border: 1px solid #C3E2D5; color: #1B4D3E; padding: 0.35rem 0.9rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; }
+
+    .btn-primary { background: var(--primary-teal); color: white; border: none; padding: 0.8rem 1.8rem; border-radius: var(--radius-full); font-family: var(--font-heading); font-size: 0.95rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 16px var(--primary-glow); transition: all 0.25s ease; text-decoration: none; }
+    .btn-primary:hover { background: var(--primary-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(27, 77, 62, 0.25); }
+    .btn-secondary { background: #FFFFFF; border: 1px solid var(--glass-border); color: var(--text-main); padding: 0.8rem 1.8rem; border-radius: var(--radius-full); font-family: var(--font-heading); font-size: 0.95rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.25s ease; text-decoration: none; }
+    .btn-secondary:hover { background: #F8FAFC; border-color: var(--primary-light); }
+
+    .chat-container { max-width: 860px; margin: 0 auto; height: 640px; display: flex; flex-direction: column; overflow: hidden; background: #FFFFFF; }
+    .chat-header { padding: 1.25rem 1.75rem; background: #F8FAFC; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between; }
+    .chat-messages { flex: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1.25rem; background: #FAFBF9; }
+    .chat-bubble { background: #FFFFFF; border: 1px solid var(--glass-border); padding: 0.9rem 1.25rem; border-radius: 18px 18px 18px 4px; color: var(--text-main); font-size: 0.95rem; line-height: 1.55; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+    .chat-bubble.user { background: var(--primary-teal); color: white; border-radius: 18px 18px 4px 18px; border: none; }
+    .action-chip { background: #EBF5F0; border: 1px solid #C3E2D5; color: #1B4D3E; padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.35rem; }
+    .action-chip:hover { background: #D1EADE; }
+
+    .option-btn { background: #F8FAFC; border: 1px solid var(--glass-border); color: var(--text-main); padding: 0.85rem 1.25rem; border-radius: var(--radius-md); text-align: left; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; }
+    .option-btn:hover { background: #EBF5F0; border-color: var(--primary-light); transform: translateX(4px); }
+
+    .helpline-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+    .helpline-card { padding: 1.75rem; display: flex; flex-direction: column; justify-content: space-between; background: #FFFFFF; }
+    .helpline-category-tag { display: inline-block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--primary-teal); background: #EBF5F0; padding: 0.25rem 0.75rem; border-radius: var(--radius-full); margin-bottom: 0.75rem; }
+
+    .breathing-box { width: 220px; height: 220px; margin: 2rem auto; border-radius: var(--radius-full); background: radial-gradient(circle, #2A725D 0%, #1B4D3E 70%); display: flex; align-items: center; justify-content: center; color: white; font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; box-shadow: 0 10px 30px rgba(27, 77, 62, 0.25); transition: transform 4s ease-in-out; }
+    .breathing-box.expand { transform: scale(1.35); }
+    .breathing-box.shrink { transform: scale(0.9); }
+
+    .footer { border-top: 1px solid var(--glass-border); padding: 3rem 0; margin-top: 5rem; color: var(--text-muted); font-size: 0.88rem; }
+    .disclaimer-box { background: #FEF3C7; border: 1px solid #FDE68A; border-radius: var(--radius-md); padding: 1rem 1.5rem; margin-bottom: 2rem; color: #92400E; font-size: 0.85rem; font-weight: 500; }
+
+    /* SVG Icon Helpers */
+    .icon-svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; vertical-align: middle; }
+    .icon-svg.large { width: 20px; height: 20px; }
+
+    /* Spring & Bounce Micro-Animations */
+    @keyframes floatBounce {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .animated-float { animation: floatBounce 4s ease-in-out infinite; }
+
+    .hero-section { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; padding: 3.5rem 0 2.5rem; }
+    @media (max-width: 992px) { .hero-section { grid-template-columns: 1fr; gap: 2rem; text-align: center; } }
+    .hero-graphic-card { position: relative; border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08); border: 1px solid var(--glass-border); }
+    .hero-graphic-img { width: 100%; height: 380px; object-fit: cover; display: block; filter: brightness(0.98); transition: transform 0.6s ease; }
+    .hero-graphic-card:hover .hero-graphic-img { transform: scale(1.03); }
+    .floating-glass-badge { position: absolute; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); padding: 0.75rem 1.25rem; border-radius: var(--radius-md); display: flex; align-items: center; gap: 0.75rem; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); animation: floatBounce 4s ease-in-out infinite; }
+    .stat-card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin: 2rem 0; }
+    .stat-card { padding: 1.5rem; background: #FFFFFF; border: 1px solid var(--glass-border); border-radius: var(--radius-md); transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+    .stat-card:hover { transform: translateY(-4px); border-color: var(--primary-light); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+    .feature-showcase-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin: 3rem 0; }
+    .feature-card { background: #FFFFFF; border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 1.75rem; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.35s ease; box-shadow: 0 4px 16px rgba(0,0,0,0.03); }
+    .feature-card:hover { transform: translateY(-6px); border-color: var(--primary-light); box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08); }
+    .feature-icon-wrapper { width: 48px; height: 48px; border-radius: var(--radius-md); background: #EBF5F0; border: 1px solid #C3E2D5; display: flex; align-items: center; justify-content: center; color: var(--primary-teal); margin-bottom: 1.25rem; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const BotIcon = ({ className = "icon-svg" }) => (
+      <svg className={className} viewBox="0 0 24 24"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+    );
+    const UserIcon = ({ className = "icon-svg" }) => (
+      <svg className={className} viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    );
+    const PhoneIcon = ({ className = "icon-svg" }) => (
+      <svg className={className} viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    );
+    const HeartIcon = ({ className = "icon-svg" }) => (
+      <svg className={className} viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+    );
+    const SparklesIcon = ({ className = "icon-svg" }) => (
+      <svg className={className} viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+    );
+    const WindIcon = ({ className = "icon-svg" }) => (
+      <svg className={className} viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>
+    );
+    const BookIcon = ({ className = "icon-svg" }) => (
+      <svg className={className} viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    );
+    const ShieldIcon = ({ className = "icon-svg" }) => (
+      <svg className={className} viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    );
+    const SendIcon = ({ className = "icon-svg" }) => (
+      <svg className={className} viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+    );
+    const ArrowRightIcon = ({ className = "icon-svg" }) => (
+      <svg className={className} viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    );
+
+    function Navbar({ activeTab, setActiveTab }) {
+      return (
+        <nav className="navbar">
+          <div className="container nav-content">
+            <a href="#" className="brand-logo" onClick={() => setActiveTab('chatbot')}>
+              <img src="/authentic_care_avatar_clean.png" alt="AmiCare Logo" style={{ width: '38px', height: '38px', objectFit: 'contain' }} />
+              <span>AmiCare</span>
+            </a>
+            <div className="nav-links">
+              <button className={`nav-btn ${activeTab === 'chatbot' ? 'active' : ''}`} onClick={() => setActiveTab('chatbot')}>
+                <BotIcon /> AmiCare Assistant
+              </button>
+              <button className={`nav-btn ${activeTab === 'helplines' ? 'active' : ''}`} onClick={() => setActiveTab('helplines')}>
+                <PhoneIcon /> Helpline DB
+              </button>
+              <button className={`nav-btn ${activeTab === 'breathing' ? 'active' : ''}`} onClick={() => setActiveTab('breathing')}>
+                <WindIcon /> Breathing Tool
+              </button>
+              <button className={`nav-btn ${activeTab === 'resources' ? 'active' : ''}`} onClick={() => setActiveTab('resources')}>
+                <BookIcon /> Self-Care Hub
+              </button>
+            </div>
+            <a href="tel:14416" className="emergency-badge"><PhoneIcon /> 24/7 Crisis: 14416</a>
+          </div>
+        </nav>
+      );
+    }
+
+    function ChatbotLanding({ onNavigateTab }) {
+      const [messages, setMessages] = useState([
+        {
+          id: 1,
+          sender: 'bot',
+          text: "Welcome to AmiCare! I am your confidential AI mental well-being assistant. I chat with you to listen and continuously self-determine your emotional state of being as we talk. How are you feeling today?",
+          suggested: ["I feel stressed about my exams", "I'm having trouble sleeping", "I feel overwhelmed and anxious", "Start Stress Self-Check"]
+        }
+      ]);
+      const [input, setInput] = useState('');
+      const [isTyping, setIsTyping] = useState(false);
+      const [stateLabel, setStateLabel] = useState("Baseline / Active Listening");
+      const [severity, setSeverity] = useState("Low");
+
+      const pssQ = [
+        { prompt: "In the last month, how often have you felt overwhelmed by academic deadlines or personal commitments?", opts: ["Never", "Almost Never", "Sometimes", "Fairly Often", "Very Often"] },
+        { prompt: "In the last month, how often have you felt unable to control important things in your student life?", opts: ["Never", "Almost Never", "Sometimes", "Fairly Often", "Very Often"] },
+        { prompt: "In the last month, how often have you felt confident handling personal or study problems?", opts: ["Very Often", "Fairly Often", "Sometimes", "Almost Never", "Never"] },
+        { prompt: "In the last month, how often have you felt difficulties were piling up so high you could not overcome them?", opts: ["Never", "Almost Never", "Sometimes", "Fairly Often", "Very Often"] }
+      ];
+      const [assessActive, setAssessActive] = useState(false);
+      const [qIdx, setQIdx] = useState(0);
+      const [answers, setAnswers] = useState([]);
+
+      const bottomRef = useRef(null);
+      useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, isTyping, assessActive]);
+
+      const handleSend = async (txt) => {
+        const msg = txt || input;
+        if (!msg.trim()) return;
+        setMessages(prev => [...prev, { id: Date.now(), sender: 'user', text: msg }]);
+        if (!txt) setInput('');
+        setIsTyping(true);
+
+        if (msg.toLowerCase().includes('check') || msg.toLowerCase().includes('assess') || msg.toLowerCase().includes('start stress')) {
+          setTimeout(() => {
+            setIsTyping(false); setAssessActive(true); setQIdx(0); setAnswers([]);
+          }, 500);
+          return;
+        }
+
+        if (msg.toLowerCase().includes('helpline') || msg.toLowerCase().includes('crisis') || msg.toLowerCase().includes('emergency')) {
+          setTimeout(() => { setIsTyping(false); onNavigateTab('helplines'); }, 500);
+          return;
+        }
+
+        if (msg.toLowerCase().includes('breath')) {
+          setTimeout(() => { setIsTyping(false); onNavigateTab('breathing'); }, 500);
+          return;
+        }
+
+        try {
+          const res = await fetch('/api/chat/message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setIsTyping(false);
+            if (data.inferred_state) {
+              setStateLabel(data.inferred_state.state_label);
+              setSeverity(data.inferred_state.severity);
+            }
+            setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'bot', text: data.reply, suggested: data.suggested_actions || [] }]);
+          } else {
+            fallbackBot();
+          }
+        } catch { fallbackBot(); }
+      };
+
+      const fallbackBot = () => {
+        setIsTyping(false);
+        setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'bot', text: "I am listening closely. Based on our dialogue, taking a quick stress assessment or rhythmic breathing exercise can help bring clarity.", suggested: ["Start Stress Self-Check", "Find Emergency Helplines", "Guided Box Breathing"] }]);
+      };
+
+      const handleAnswer = (val, label) => {
+        const newAns = [...answers, val];
+        setAnswers(newAns);
+        setMessages(prev => [...prev, { id: Date.now(), sender: 'user', text: label }]);
+
+        if (qIdx < pssQ.length - 1) {
+          setQIdx(qIdx + 1);
+        } else {
+          setAssessActive(false);
+          const total = newAns.reduce((a, b) => a + b, 0);
+          let level = total > 10 ? "Elevated Stress" : total > 5 ? "Moderate Stress" : "Low Stress";
+          setStateLabel(`PSS Score: ${total}/16 (${level})`);
+          setSeverity(level.split(' ')[0]);
+
+          setMessages(prev => [...prev, {
+            id: Date.now() + 1,
+            sender: 'bot',
+            text: `Self-Assessment Completed! Score: ${total}/16 (${level}). We recommend taking small rest breaks and keeping emergency helpline 14416 handy.`,
+            suggested: ["Find Emergency Helplines", "Guided Box Breathing"]
+          }]);
+        }
+      };
+
+      const chatSectionRef = useRef(null);
+      const scrollToChat = () => { chatSectionRef.current?.scrollIntoView({ behavior: 'smooth' }); };
+
+      return (
+        <div className="container" style={{ paddingBottom: '4rem' }}>
+          {/* Top Academic Badges */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap', paddingTop: '2rem' }}>
+            <span className="badge-tag"><ShieldIcon /> Confidential & Non-Diagnostic</span>
+            <span className="badge-tag" style={{ background: '#EBF5F0', color: '#1B4D3E', borderColor: '#C3E2D5' }}><SparklesIcon /> UN SDG 3: Good Health</span>
+            <span className="badge-tag" style={{ background: '#EEF2FF', color: '#3730A3', borderColor: '#C7D2FE' }}>K.R. Mangalam University</span>
+          </div>
+
+          {/* Hero Section */}
+          <div className="hero-section">
+            <div>
+              <h1 className="hero-title" style={{ textAlign: 'left', fontSize: '2.8rem', lineHeight: '1.18', color: 'var(--text-main)' }}>
+                Your Safe Haven for Campus Mental Well-Being
+              </h1>
+              <p className="hero-subtitle" style={{ textAlign: 'left', margin: '1.25rem 0 2rem', fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
+                Talk through exam pressure, sleep fatigue, or academic stress. AmiCare provides a safe, confidential space for emotional self-reflection, connects you with 24/7 helplines, and guides you through mindfulness exercises.
+              </p>
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <button className="btn-primary" onClick={scrollToChat}>
+                  <BotIcon /> Talk to AmiCare Companion
+                </button>
+                <button className="btn-secondary" onClick={() => handleSend("Start Stress Self-Check")}>
+                  <SparklesIcon /> Take 2-Min Stress Check
+                </button>
+                <button className="btn-secondary" onClick={() => onNavigateTab('helplines')}>
+                  <PhoneIcon /> 24/7 Helpline DB
+                </button>
+              </div>
+            </div>
+
+            {/* Hero Graphic Card */}
+            <div className="hero-graphic-card">
+              <img src="/authentic_student_wellness.jpg" alt="Student Wellness Haven" className="hero-graphic-img" />
+              <div className="floating-glass-badge" style={{ top: '20px', left: '20px' }}>
+                <div className="logo-icon" style={{ width: '32px', height: '32px', background: '#1B4D3E' }}><PhoneIcon /></div>
+                <div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>24/7 CRISIS HELPLINE</div>
+                  <div style={{ fontSize: '0.9rem', color: '#1B4D3E', fontWeight: 800 }}>Tele-MANAS: 14416</div>
+                </div>
+              </div>
+              <div className="floating-glass-badge" style={{ bottom: '20px', right: '20px' }}>
+                <div className="logo-icon" style={{ width: '32px', height: '32px', background: '#2A725D' }}><HeartIcon /></div>
+                <div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700 }}>SELF-ASSESSMENT</div>
+                  <div style={{ fontSize: '0.9rem', color: '#2A725D', fontWeight: 800 }}>PSS-4 Stress Score</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Stat Cards */}
+          <div className="stat-card-grid">
+            <div className="stat-card">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--primary-teal)', marginBottom: '0.4rem' }}>
+                <ShieldIcon /> <span style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-main)' }}>100% Free</span>
+              </div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Anonymous & confidential student mental support</div>
+            </div>
+            <div className="stat-card">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--primary-teal)', marginBottom: '0.4rem' }}>
+                <PhoneIcon /> <span style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-main)' }}>24/7 Access</span>
+              </div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Direct connection to Tele-MANAS & KIRAN lines</div>
+            </div>
+            <div className="stat-card">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--primary-teal)', marginBottom: '0.4rem' }}>
+                <WindIcon /> <span style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-main)' }}>4-4-4-4 Rhythm</span>
+              </div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Guided Box Breathing for exam panic relief</div>
+            </div>
+            <div className="stat-card">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--primary-teal)', marginBottom: '0.4rem' }}>
+                <BookIcon /> <span style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-main)' }}>5-4-3-2-1 Tool</span>
+              </div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Sensory grounding exercise for acute stress</div>
+            </div>
+          </div>
+
+          {/* Feature Showcase Grid */}
+          <div style={{ margin: '3.5rem 0 2.5rem' }}>
+            <h2 style={{ textAlign: 'center', fontSize: '2.2rem', marginBottom: '0.5rem' }}>Platform Features & Support Tools</h2>
+            <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '2rem' }}>Comprehensive resources tailored to help students manage stress early.</p>
+
+            <div className="feature-showcase-grid">
+              <div className="feature-card">
+                <div>
+                  <div className="feature-icon-wrapper"><BotIcon className="icon-svg large" /></div>
+                  <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Emotional Support Companion</h3>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.55' }}>
+                    Converse naturally with AmiCare. The companion actively listens and helps reflect your emotional stress state as you talk.
+                  </p>
+                </div>
+                <button className="btn-secondary" style={{ marginTop: '1.25rem', padding: '0.55rem 1rem', fontSize: '0.85rem' }} onClick={scrollToChat}>
+                  Start Conversation <ArrowRightIcon />
+                </button>
+              </div>
+
+              <div className="feature-card">
+                <div>
+                  <div className="feature-icon-wrapper" style={{ background: '#FEF3C7', color: '#D97706', borderColor: '#FDE68A' }}><SparklesIcon className="icon-svg large" /></div>
+                  <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Stress Self-Assessment</h3>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.55' }}>
+                    Validated non-diagnostic PSS-4 Perceived Stress Scale that calculates your stress index in under 2 minutes.
+                  </p>
+                </div>
+                <button className="btn-secondary" style={{ marginTop: '1.25rem', padding: '0.55rem 1rem', fontSize: '0.85rem' }} onClick={() => handleSend("Start Stress Self-Check")}>
+                  Take Self-Check <ArrowRightIcon />
+                </button>
+              </div>
+
+              <div className="feature-card">
+                <div>
+                  <div className="feature-icon-wrapper" style={{ background: '#FFF1F2', color: '#BE123C', borderColor: '#FECDD3' }}><PhoneIcon className="icon-svg large" /></div>
+                  <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Helpline Directory DB</h3>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.55' }}>
+                    Verified database of 24/7 crisis numbers (Tele-MANAS, KIRAN, Vandrevala) with instant click-to-call functionality.
+                  </p>
+                </div>
+                <button className="btn-secondary" style={{ marginTop: '1.25rem', padding: '0.55rem 1rem', fontSize: '0.85rem' }} onClick={() => onNavigateTab('helplines')}>
+                  View Helplines <ArrowRightIcon />
+                </button>
+              </div>
+
+              <div className="feature-card">
+                <div>
+                  <div className="feature-icon-wrapper" style={{ background: '#F0FDF4', color: '#166534', borderColor: '#BBF7D0' }}><WindIcon className="icon-svg large" /></div>
+                  <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Self-Care & Grounding</h3>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.55' }}>
+                    Interactive 5-4-3-2-1 sensory grounding and 4-4-4-4 Box Breathing tools to soothe physical anxiety immediately.
+                  </p>
+                </div>
+                <button className="btn-secondary" style={{ marginTop: '1.25rem', padding: '0.55rem 1rem', fontSize: '0.85rem' }} onClick={() => onNavigateTab('resources')}>
+                  Explore Self-Care <ArrowRightIcon />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Interactive AI Chatbot Window */}
+          <div ref={chatSectionRef} style={{ paddingTop: '1.5rem' }}>
+            <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+              <h2 style={{ fontSize: '2rem' }}>Interactive AmiCare Companion</h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Share what is on your mind below — AmiCare provides supportive dialogue and helps reflect your stress level.</p>
+            </div>
+
+            {/* Real-time State of Being Banner */}
+            <div className="glass-card" style={{ maxWidth: '860px', margin: '0 auto 1.5rem', padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderLeft: '4px solid var(--primary-teal)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <HeartIcon className="icon-svg large" />
+                <div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700 }}>
+                    Current Emotional State
+                  </div>
+                  <div style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                    {stateLabel}
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Severity:</span>
+                <span style={{
+                  fontSize: '0.78rem', fontWeight: 700, padding: '0.25rem 0.75rem', borderRadius: '12px',
+                  background: severity === 'Elevated' ? '#FFF1F2' : severity === 'Moderate' ? '#FEF3C7' : '#EBF5F0',
+                  color: severity === 'Elevated' ? '#BE123C' : severity === 'Moderate' ? '#92400E' : '#1B4D3E',
+                  border: '1px solid var(--glass-border)'
+                }}>
+                  {severity}
+                </span>
+              </div>
+            </div>
+
+            {/* Main Chat Interface */}
+            <div className="glass-card chat-container">
+              {/* Chat Header */}
+              <div className="chat-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                  <img src="/authentic_care_avatar.jpg" alt="AmiCare Companion Avatar" style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--primary-teal)' }} />
+                  <div>
+                    <h3 style={{ fontSize: '1.1rem', color: 'var(--text-main)' }}>AmiCare Companion</h3>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--primary-teal)', display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 600 }}>
+                      <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#10B981' }}></span>
+                      Online • Active Emotional Listening
+                    </div>
+                  </div>
+                </div>
+                <button className="btn-secondary" style={{ padding: '0.45rem 0.9rem', fontSize: '0.82rem' }} onClick={() => onNavigateTab('helplines')}>
+                  <PhoneIcon /> 24/7 Helpline: 14416
+                </button>
+              </div>
+
+              {/* Chat Messages */}
+              <div className="chat-messages">
+                {messages.map(m => (
+                  <div key={m.id} style={{ display: 'flex', flexDirection: 'column', alignItems: m.sender === 'user' ? 'flex-end' : 'flex-start' }}>
+                    <div style={{ display: 'flex', gap: '0.75rem', maxWidth: '82%', flexDirection: m.sender === 'user' ? 'row-reverse' : 'row' }}>
+                      {m.sender === 'user' ? (
+                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary-teal)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0 }}>
+                          <UserIcon />
+                        </div>
+                      ) : (
+                        <img src="/authentic_care_avatar.jpg" alt="Avatar" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: '1px solid var(--primary-teal)' }} />
+                      )}
+                      <div className={`chat-bubble ${m.sender === 'user' ? 'user' : ''}`}>
+                        {m.text}
+                      </div>
+                    </div>
+                    {m.suggested && m.suggested.length > 0 && (
+                      <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', marginTop: '0.65rem', marginLeft: '2.5rem' }}>
+                        {m.suggested.map((s, idx) => (
+                          <button key={idx} className="action-chip" onClick={() => handleSend(s)}>
+                            <SparklesIcon /> {s}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                {assessActive && (
+                  <div style={{ marginLeft: '2.5rem', background: '#FFFFFF', padding: '1.25rem', borderRadius: '16px', border: '1px solid var(--primary-teal)', maxWidth: '85%', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--primary-teal)', fontWeight: 700, marginBottom: '0.35rem' }}>PSS-4 Scale • Question {qIdx + 1} of 4</div>
+                    <div style={{ fontWeight: 600, fontSize: '0.98rem', marginBottom: '1rem', color: 'var(--text-main)' }}>{pssQ[qIdx].prompt}</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                      {pssQ[qIdx].opts.map((opt, val) => (
+                        <button key={val} className="option-btn" style={{ padding: '0.65rem 1rem', fontSize: '0.88rem' }} onClick={() => handleAnswer(val, opt)}>
+                          <span>{opt}</span>
+                          <ArrowRightIcon />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {isTyping && (
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginLeft: '2.5rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                    <BotIcon className="icon-svg" /> AmiCare is preparing a response...
+                  </div>
+                )}
+                <div ref={bottomRef} />
+              </div>
+
+              {/* Input Form */}
+              <div style={{ padding: '1rem 1.5rem', background: '#FFFFFF', borderTop: '1px solid var(--glass-border)', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                <input
+                  type="text"
+                  placeholder="Share what is on your mind today — exams, stress, sleep, or feeling overwhelmed..."
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleSend()}
+                  style={{ flex: 1, background: '#F8FAFC', border: '1px solid #CBD5E1', borderRadius: 'var(--radius-full)', padding: '0.8rem 1.25rem', color: 'var(--text-main)', fontSize: '0.95rem', outline: 'none' }}
+                />
+                <button className="btn-primary" onClick={() => handleSend()} style={{ padding: '0.8rem 1.4rem' }}><SendIcon /></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function Helplines() {
+      const list = [
+        { name: "Tele-MANAS (Govt. of India)", num: "14416 / 1800-891-4416", cat: "24/7 Crisis Helpline", desc: "National tele-mental health helpline providing 24/7 confidential support across India.", hours: "24/7", lang: "English, Hindi, Regional" },
+        { name: "KIRAN Mental Health Helpline", num: "1800-599-0019", cat: "24/7 Crisis Helpline", desc: "Toll-free mental health rehabilitation helpline by Ministry of Social Justice.", hours: "24/7", lang: "English, Hindi, 13 Regional" },
+        { name: "Vandrevala Foundation", num: "+91 9999 666 555", cat: "Tele-Therapy & Counseling", desc: "Free 24x7 emotional support and counseling by trained professionals.", hours: "24/7", lang: "English, Hindi, Gujarati, Marathi" },
+        { name: "Student Wellness Line", num: "1800-200-CAMPUS", cat: "Student Counseling", desc: "Dedicated campus stress helpline offering empathetic peer listener support.", hours: "8 AM - 10 PM", lang: "English, Hindi" }
+      ];
+
+      return (
+        <div className="container" style={{ paddingBottom: '4rem' }}>
+          <h2 style={{ textAlign: 'center', fontSize: '2.2rem', marginBottom: '0.5rem' }}>Verified Student Referral Database</h2>
+          <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '2rem' }}>Direct connection to 24/7 crisis lines and campus counseling services.</p>
+          <div className="helpline-grid">
+            {list.map((h, i) => (
+              <div key={i} className="glass-card helpline-card">
+                <div>
+                  <span className="helpline-category-tag">{h.cat}</span>
+                  <h3 style={{ marginTop: '0.5rem' }}>{h.name}</h3>
+                  <div style={{ color: 'var(--primary-light)', fontSize: '1.2rem', fontWeight: 700, margin: '0.4rem 0', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <PhoneIcon /> {h.num}
+                  </div>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{h.desc}</p>
+                </div>
+                <a href={`tel:${h.num.split('/')[0]}`} className="call-btn" style={{ marginTop: '1rem' }}><PhoneIcon /> Call Helpline</a>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function Breathing() {
+      const [active, setActive] = useState(false);
+      const [phase, setPhase] = useState('Inhale');
+
+      useEffect(() => {
+        let t = null;
+        if (active) {
+          t = setInterval(() => {
+            setPhase(p => p === 'Inhale' ? 'Hold' : p === 'Hold' ? 'Exhale' : 'Inhale');
+          }, 4000);
+        }
+        return () => clearInterval(t);
+      }, [active]);
+
+      return (
+        <div className="container" style={{ maxWidth: '650px', paddingBottom: '4rem', textAlign: 'center' }}>
+          <div className="glass-card" style={{ padding: '3rem 2rem' }}>
+            <h2>Guided Box Breathing (4-4-4-4)</h2>
+            <p style={{ color: 'var(--text-secondary)', margin: '0.5rem 0 1.5rem' }}>Follow the rhythm to reduce acute exam anxiety and physical tension.</p>
+            <div className={`breathing-box ${active ? (phase === 'Inhale' ? 'expand' : 'shrink') : ''}`}>
+              {active ? phase : 'Ready'}
+            </div>
+            <button className="btn-primary" onClick={() => setActive(!active)}>
+              <WindIcon /> {active ? 'Pause Exercise' : 'Begin Breathing'}
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    function Resources() {
+      const [step, setStep] = useState(5);
+      const grounding = [
+        { s: 5, t: "Look around", p: "Acknowledge 5 things you can SEE near your desk right now." },
+        { s: 4, t: "Touch your surroundings", p: "Acknowledge 4 things you can TOUCH (your chair, phone, feet on floor)." },
+        { s: 3, t: "Listen closely", p: "Acknowledge 3 things you can HEAR (fan hum, birds, your breath)." },
+        { s: 2, t: "Notice scents", p: "Acknowledge 2 things you can SMELL around you." },
+        { s: 1, t: "Taste & breathe", p: "Acknowledge 1 thing you can TASTE or take 1 deep refreshing breath." }
+      ];
+      const cur = grounding.find(g => g.s === step);
+
+      return (
+        <div className="container" style={{ paddingBottom: '4rem' }}>
+          <h2 style={{ textAlign: 'center', fontSize: '2.2rem', marginBottom: '0.5rem' }}>Student Self-Care & Resilience Hub</h2>
+          <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '2rem' }}>Interactive anxiety reduction tools and grounding exercises.</p>
+
+          <div className="glass-card" style={{ maxWidth: '640px', margin: '0 auto', padding: '2.5rem', textAlign: 'center' }}>
+            <span className="helpline-category-tag">5-4-3-2-1 Grounding Tool • Step {6 - step} of 5</span>
+            <h2 style={{ fontSize: '1.8rem', margin: '0.75rem 0' }}>{cur.t}</h2>
+            <p style={{ color: 'var(--text-primary)', fontSize: '1.1rem', marginBottom: '1.5rem' }}>{cur.p}</p>
+            {step > 1 ? (
+              <button className="btn-primary" onClick={() => setStep(step - 1)}>Next Step ({step - 1}) <ArrowRightIcon /></button>
+            ) : (
+              <button className="btn-primary" onClick={() => setStep(5)}>Complete! Restart Exercise</button>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [tab, setTab] = useState('chatbot');
+      return (
+        <div>
+          <Navbar activeTab={tab} setActiveTab={setTab} />
+          {tab === 'chatbot' && <ChatbotLanding onNavigateTab={setTab} />}
+          {tab === 'helplines' && <Helplines />}
+          {tab === 'breathing' && <Breathing />}
+          {tab === 'resources' && <Resources />}
+
+          <footer className="footer container">
+            <div className="disclaimer-box">
+              <strong>Non-Diagnostic Disclaimer:</strong> AmiCare is designed solely as a conversational self-reflection tool and helpline referral directory for students. If in emergency crisis, call 14416 (Tele-MANAS) or 1800-599-0019 (KIRAN).
+            </div>
+            <div style={{ textAlign: 'center', fontSize: '0.85rem' }}>
+              <p><strong>K.R. Mangalam University — Community Service Project</strong> | Faculty Mentor: Dr. Pinky Kumari</p>
+              <p>Team: Harsh Dev Jha, Ishan Rawat, Hrijul Bharadwaj, Akshay Kumar, Anvesha Saxena</p>
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
