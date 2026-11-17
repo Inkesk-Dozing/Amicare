@@ -441,14 +441,79 @@
     }
 
     function ChatbotLanding({ onNavigateTab }) {
-      const [messages, setMessages] = useState([
-        {
-          id: 1,
-          sender: 'bot',
-          text: "Welcome to AmiCare! I am your confidential AI mental well-being assistant. I chat with you to listen and continuously self-determine your emotional state of being as we talk. How are you feeling today?",
-          suggested: ["Scan My Face for Stress", "I feel stressed about my exams", "I'm having trouble sleeping", "Start Stress Self-Check"]
+      const STORAGE_KEY = 'amicare_chat_session_v1';
+      const [messages, setMessages] = useState(() => {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) return JSON.parse(saved);
+        } catch (e) {
+          console.warn('Failed to load chat from localStorage', e);
         }
-      ]);
+        return [
+          {
+            id: 1,
+            sender: 'bot',
+            text: "Welcome to AmiCare! I am your confidential AI mental well-being assistant. I chat with you to listen and continuously self-determine your emotional state of being as we talk. How are you feeling today?",
+            suggested: ["Scan My Face for Stress", "I feel stressed about my exams", "I'm having trouble sleeping", "Start Stress Self-Check"]
+          }
+        ];
+      });
+
+      // Persist to localStorage on update
+      useEffect(() => {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+        } catch (e) {
+          console.warn('Failed to save chat to localStorage', e);
+        }
+      }, [messages]);
+
+      const handleClearChat = () => {
+        if (window.confirm("Are you sure you want to clear your current conversation history? This cannot be undone.")) {
+          try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+          setMessages([
+            {
+              id: Date.now(),
+              sender: 'bot',
+              text: "Conversation reset. Welcome back to AmiCare! How are you feeling right now?",
+              suggested: ["Scan My Face for Stress", "I feel stressed about my exams", "Start Stress Self-Check"]
+            }
+          ]);
+        }
+      };
+
+      const handleExportSummary = () => {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const transcript = messages.map(m => `**${m.sender === 'bot' ? 'AmiCare AI' : 'Student'}**: ${m.text}`).join('\n\n');
+        const report = `# AmiCare — Student Wellness Session Report
+**Date**: ${dateStr}
+**Session Baseline Assessment**: ${stateLabel}
+**Stress Severity Level**: ${severity}
+${answers && answers.length > 0 ? `**PSS-4 Assessment**: Completed ${answers.length} items\n` : ''}
+
+---
+
+## 🔒 Confidential Non-Diagnostic Summary
+*Disclaimer: This wellness summary is generated for personal student reflection and self-care tracking. It does NOT constitute a clinical psychological assessment or diagnostic medical record.*
+
+### Conversation Transcript:
+${transcript}
+
+---
+
+### Emergency Crisis Resources:
+- **Tele-MANAS (Govt. of India)**: 14416 / 1800-891-4416 (24/7 Toll-Free)
+- **KIRAN Mental Health Line**: 1800-599-0019 (24/7 Toll-Free)
+- **Vandrevala Foundation**: +91 9999 666 555 (24/7 Free)
+- **Student Campus Line**: 1800-200-CAMPUS
+`;
+        const blob = new Blob([report], { type: 'text/markdown;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `AmiCare_Session_Summary_${now.toISOString().slice(0,10)}.md`;
+        link.click();
+      };
       const [input, setInput] = useState('');
       const [isTyping, setIsTyping] = useState(false);
       const [stateLabel, setStateLabel] = useState("Baseline / Active Listening");
@@ -775,9 +840,6 @@
 
     function Helplines() {
       const [copiedIdx, setCopiedIdx] = useState(null);
-      const [searchTerm, setSearchTerm] = useState('');
-      const [activeCat, setActiveCat] = useState('All');
-      const [dialModal, setDialModal] = useState(null);
 
       const list = [
         { 
@@ -845,30 +907,9 @@
         }
       };
 
-      const categories = [
-        { id: 'All', label: 'All Helplines' },
-        { id: 'Crisis', label: '24/7 Crisis (Tele-MANAS, KIRAN)' },
-        { id: 'Student', label: 'Student Wellness' },
-        { id: 'Therapy', label: 'Tele-Therapy & Counseling' }
-      ];
-
-      const filteredList = list.filter(h => {
-        const q = searchTerm.toLowerCase().trim();
-        const matchesQuery = !q || 
-          h.name.toLowerCase().includes(q) ||
-          h.desc.toLowerCase().includes(q) ||
-          h.lang.toLowerCase().includes(q) ||
-          h.num.includes(q);
-        const matchesCat = activeCat === 'All' ||
-          (activeCat === 'Crisis' && h.cat.includes('Crisis')) ||
-          (activeCat === 'Student' && h.cat.includes('Student')) ||
-          (activeCat === 'Therapy' && h.cat.includes('Therapy'));
-        return matchesQuery && matchesCat;
-      });
-
       return (
         <div className="container" style={{ paddingBottom: '3rem' }}>
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
             <span className="badge-tag" style={{ marginBottom: '0.75rem' }}>
               <ShieldIcon /> Verified Student Referral Directory
             </span>
@@ -876,74 +917,10 @@
             <p className="hero-subtitle" style={{ margin: '0.5rem auto 1rem', maxWidth: '680px' }}>
               Direct, 100% confidential connection to emergency crisis lines, campus student counseling, and professional emotional therapy.
             </p>
-
-            {/* Real-time Search Input */}
-            <div style={{ maxWidth: '560px', margin: '1.5rem auto 1rem', position: 'relative' }}>
-              <input
-                type="text"
-                placeholder="Search helplines by name, language, or state (e.g. Tele-MANAS, Hindi, 24/7)..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '0.85rem 1.25rem 0.85rem 2.85rem',
-                  borderRadius: '9999px',
-                  border: '1.5px solid var(--border-sage)',
-                  background: '#ffffff',
-                  fontSize: '0.95rem',
-                  outline: 'none',
-                  boxShadow: '0 2px 8px rgba(61,122,104,0.06)',
-                  color: 'var(--text-main)'
-                }}
-              />
-              <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--sage-primary)', pointerEvents: 'none' }}>
-                <SearchIcon className="icon-svg" />
-              </span>
-              {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm('')}
-                  style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#999' }}
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-
-            {/* Category Filter Pills */}
-            <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
-              {categories.map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveCat(cat.id)}
-                  style={{
-                    padding: '0.45rem 1rem',
-                    borderRadius: '9999px',
-                    fontSize: '0.85rem',
-                    fontWeight: activeCat === cat.id ? '600' : '400',
-                    border: '1px solid',
-                    borderColor: activeCat === cat.id ? 'var(--sage-primary)' : 'var(--border-sage)',
-                    background: activeCat === cat.id ? 'var(--sage-primary)' : '#ffffff',
-                    color: activeCat === cat.id ? '#ffffff' : 'var(--text-main)',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease'
-                  }}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
           </div>
 
-          {filteredList.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '3rem 1rem', background: '#ffffff', borderRadius: '16px', border: '1px dashed var(--border-sage)' }}>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>No helplines match your query "<strong>{searchTerm}</strong>".</p>
-              <button onClick={() => { setSearchTerm(''); setActiveCat('All'); }} style={{ marginTop: '0.75rem', padding: '0.5rem 1.25rem', borderRadius: '8px', background: 'var(--sage-primary)', color: '#fff', border: 'none', cursor: 'pointer' }}>
-                Reset Filters
-              </button>
-            </div>
-          ) : (
-            <div className="helpline-grid">
-              {filteredList.map((h, i) => (
+          <div className="helpline-grid">
+            {list.map((h, i) => (
               <div key={i} className="glass-card helpline-card">
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
