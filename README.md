@@ -47,9 +47,10 @@ Aligned with **UN Sustainable Development Goal 3: Good Health & Well-Being**:
 
 ---
 
-## 🔬 Assessment Frameworks Supported
+## 🔬 Assessment Frameworks & AI Computer Vision Supported
 
-AmiCare integrates standard non-diagnostic self-assessment frameworks:
+AmiCare integrates standard non-diagnostic self-assessment frameworks along with computer vision:
+- **OpenCV Facial Stress & Emotion Examination**: Deep facial landmark analysis (YuNet), forehead & brow furrow tension (corrugator supercilii cranial strain), smile ratio & mouth valence analysis, and eye fatigue alertness. Classifies student state into **Happy**, **Well & Balanced**, **Sad / Subdued**, or **Stressed**.
 - **PSS (Perceived Stress Scale)**: Evaluates academic and personal stress levels.
 - **GAD-7 (Anxiety Screening Context)**: Evaluates nervousness and tension indicators.
 - **PHQ-9 (Depression Screening Context)**: Evaluates low mood and energy trends.
