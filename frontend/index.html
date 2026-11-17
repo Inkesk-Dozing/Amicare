@@ -80,17 +80,17 @@
       background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--glass-border);
-      padding: 0.9rem 0;
+      padding: 0.55rem 0;
     }
     .nav-content { display: flex; justify-content: space-between; align-items: center; }
-    .brand-logo { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text-main); text-decoration: none; }
-    .logo-icon { width: 38px; height: 38px; background: var(--primary-teal); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; }
+    .brand-logo { display: flex; align-items: center; gap: 0.65rem; font-family: var(--font-heading); font-size: 1.35rem; font-weight: 800; color: var(--text-main); text-decoration: none; }
+    .logo-icon { width: 36px; height: 36px; background: var(--primary-teal); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; }
     
-    .nav-links { display: flex; gap: 0.4rem; background: #EFEFEF; padding: 0.3rem; border-radius: var(--radius-full); border: 1px solid var(--glass-border); }
-    .nav-btn { background: transparent; border: none; color: var(--text-secondary); padding: 0.55rem 1.1rem; border-radius: var(--radius-full); font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.5rem; }
+    .nav-links { display: flex; align-items: center; gap: 0.25rem; background: #EFEFEF; padding: 0.25rem; border-radius: var(--radius-full); border: 1px solid var(--glass-border); }
+    .nav-btn { background: transparent; border: none; color: var(--text-secondary); padding: 0.35rem 0.75rem; border-radius: var(--radius-full); font-size: 0.84rem; font-weight: 600; line-height: 1.25; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.35rem; white-space: nowrap; }
     .nav-btn.active, .nav-btn:hover { color: white; background: var(--primary-teal); box-shadow: 0 4px 14px var(--primary-glow); }
     
-    .emergency-badge { background: #FEF2F2; border: 1px solid #FCA5A5; color: #991B1B; padding: 0.5rem 1rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; gap: 0.45rem; text-decoration: none; }
+    .emergency-badge { background: #FEF2F2; border: 1px solid #FCA5A5; color: #991B1B; padding: 0.38rem 0.75rem; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 0.4rem; text-decoration: none; white-space: nowrap; }
 
     .hero-title { font-size: 2.6rem; line-height: 1.18; margin-bottom: 0.85rem; color: var(--text-main); text-align: center; }
     .hero-subtitle { font-size: 1.08rem; color: var(--text-secondary); max-width: 660px; margin: 0 auto 2rem; text-align: center; }
@@ -113,15 +113,147 @@
     .option-btn:hover { background: #EBF5F0; border-color: var(--primary-light); transform: translateX(4px); }
 
     .helpline-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
-    .helpline-card { padding: 1.75rem; display: flex; flex-direction: column; justify-content: space-between; background: #FFFFFF; }
-    .helpline-category-tag { display: inline-block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--primary-teal); background: #EBF5F0; padding: 0.25rem 0.75rem; border-radius: var(--radius-full); margin-bottom: 0.75rem; }
+    .helpline-card { 
+      padding: 1.75rem; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: space-between; 
+      background: #FFFFFF; 
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    }
+    .helpline-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary-light);
+      box-shadow: 0 12px 28px rgba(27, 77, 62, 0.12);
+    }
+    .helpline-category-tag { 
+      display: inline-flex; 
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem; 
+      font-weight: 700; 
+      text-transform: uppercase; 
+      letter-spacing: 0.04em;
+      color: var(--primary-teal); 
+      background: #EBF5F0; 
+      border: 1px solid #C3E2D5;
+      padding: 0.28rem 0.75rem; 
+      border-radius: var(--radius-full); 
+      margin-bottom: 0.85rem; 
+    }
+    .helpline-phone-box {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      margin: 0.85rem 0 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .helpline-phone-num {
+      color: var(--primary-teal);
+      font-size: 1.15rem;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      letter-spacing: -0.01em;
+    }
+    .helpline-actions {
+      display: flex;
+      gap: 0.65rem;
+      align-items: center;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid #F1F5F9;
+    }
+    .call-btn {
+      flex: 1;
+      background: var(--primary-teal);
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-full);
+      font-family: var(--font-heading);
+      font-size: 0.92rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border: 1px solid transparent;
+      box-shadow: 0 4px 14px var(--primary-glow);
+      transition: all 0.25s ease;
+      cursor: pointer;
+      user-select: none;
+      box-sizing: border-box;
+    }
+    .call-btn:hover {
+      background: var(--primary-light);
+      color: #FFFFFF !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(27, 77, 62, 0.28);
+    }
+    .call-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(27, 77, 62, 0.2);
+    }
+    .copy-btn {
+      background: #FFFFFF;
+      color: var(--primary-teal);
+      border: 1px solid #CBD5E1;
+      padding: 0.75rem 1.05rem;
+      border-radius: var(--radius-full);
+      font-family: var(--font-heading);
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      user-select: none;
+      text-decoration: none;
+    }
+    .copy-btn:hover {
+      background: #EBF5F0;
+      border-color: var(--primary-light);
+      color: var(--primary-teal);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .copy-btn.copied {
+      background: #DCFCE7;
+      border-color: #86EFAC;
+      color: #166534;
+    }
+    .helpline-meta-pill {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
 
-    .breathing-box { width: 220px; height: 220px; margin: 2rem auto; border-radius: var(--radius-full); background: radial-gradient(circle, #2A725D 0%, #1B4D3E 70%); display: flex; align-items: center; justify-content: center; color: white; font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; box-shadow: 0 10px 30px rgba(27, 77, 62, 0.25); transition: transform 4s ease-in-out; }
-    .breathing-box.expand { transform: scale(1.35); }
-    .breathing-box.shrink { transform: scale(0.9); }
+    .breathing-wrapper { display: flex; align-items: center; justify-content: center; min-height: 270px; margin: 0.75rem auto 1.25rem; position: relative; }
+    .breathing-box { width: 200px; height: 200px; margin: 0 auto; border-radius: var(--radius-full); background: radial-gradient(circle at 35% 35%, #2A725D 0%, #1B4D3E 85%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-family: var(--font-heading); font-size: 1.45rem; font-weight: 700; box-shadow: 0 8px 25px rgba(27, 77, 62, 0.25); transform: scale(0.9); transition: transform 4s ease-in-out, box-shadow 4s ease-in-out; user-select: none; }
+    .breathing-box.expand { transform: scale(1.3); box-shadow: 0 14px 40px rgba(27, 77, 62, 0.4); }
+    .breathing-box.hold { transform: scale(1.3); box-shadow: 0 14px 40px rgba(27, 77, 62, 0.4); }
+    .breathing-box.shrink { transform: scale(0.85); box-shadow: 0 6px 18px rgba(27, 77, 62, 0.2); }
 
-    .footer { border-top: 1px solid var(--glass-border); padding: 3rem 0; margin-top: 5rem; color: var(--text-muted); font-size: 0.88rem; }
-    .disclaimer-box { background: #FEF3C7; border: 1px solid #FDE68A; border-radius: var(--radius-md); padding: 1rem 1.5rem; margin-bottom: 2rem; color: #92400E; font-size: 0.85rem; font-weight: 500; }
+    .footer { border-top: 1px solid var(--glass-border); padding: 1.5rem 0; margin-top: 1.5rem; color: var(--text-muted); font-size: 0.88rem; }
+    .disclaimer-box { background: #FEF3C7; border: 1px solid #FDE68A; border-radius: var(--radius-md); padding: 0.9rem 1.25rem; margin-bottom: 0.75rem; color: #92400E; font-size: 0.85rem; font-weight: 500; }
 
     /* SVG Icon Helpers */
     .icon-svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; vertical-align: middle; }
@@ -148,6 +280,86 @@
     .feature-card { background: #FFFFFF; border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 1.75rem; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.35s ease; box-shadow: 0 4px 16px rgba(0,0,0,0.03); }
     .feature-card:hover { transform: translateY(-6px); border-color: var(--primary-light); box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08); }
     .feature-icon-wrapper { width: 48px; height: 48px; border-radius: var(--radius-md); background: #EBF5F0; border: 1px solid #C3E2D5; display: flex; align-items: center; justify-content: center; color: var(--primary-teal); margin-bottom: 1.25rem; }
+    /* OpenCV Face Scanner Styles */
+    .face-scan-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 2rem; align-items: start; margin-top: 1.5rem; }
+    @media (max-width: 900px) { .face-scan-grid { grid-template-columns: 1fr; } }
+    .camera-box { position: relative; width: 100%; border-radius: var(--radius-md); overflow: hidden; background: #0B1320; min-height: 380px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--glass-border); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .camera-video { width: 100%; height: auto; max-height: 480px; object-fit: contain; display: block; border-radius: var(--radius-md); }
+    .camera-placeholder { color: #94A3B8; text-align: center; padding: 2.5rem 1.5rem; }
+    .metric-badge { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.4rem 0.95rem; border-radius: var(--radius-full); font-weight: 700; font-size: 0.85rem; }
+    .badge-happy { background: #DCFCE7; color: #166534; border: 1px solid #86EFAC; }
+    .badge-well { background: #EBF5F0; color: #1B4D3E; border: 1px solid #C3E2D5; }
+    .badge-sad { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+    .badge-stressed { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
+    .stress-bar-outer { width: 100%; height: 12px; background: #E2E8F0; border-radius: var(--radius-full); overflow: hidden; margin-top: 0.5rem; }
+    .stress-bar-inner { height: 100%; border-radius: var(--radius-full); transition: width 0.4s ease, background-color 0.4s ease; }
+    
+    @keyframes cameraFlash {
+      0% { opacity: 0.95; }
+      100% { opacity: 0; }
+    }
+    .camera-flash {
+      position: absolute;
+      inset: 0;
+      background: #FFFFFF;
+      animation: cameraFlash 0.35s ease-out forwards;
+      pointer-events: none;
+      z-index: 50;
+    }
+    .scanning-laser {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #10B981, #2A725D, transparent);
+      box-shadow: 0 0 14px #10B981;
+      animation: laserScan 2.2s ease-in-out infinite alternate;
+      z-index: 20;
+      pointer-events: none;
+    }
+    @keyframes laserScan {
+      0% { top: 8%; opacity: 0.3; }
+      50% { opacity: 0.9; }
+      100% { top: 90%; opacity: 0.3; }
+    }
+    .demo-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.85rem;
+      margin-top: 0.75rem;
+    }
+    .demo-card {
+      border: 2px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: #FFFFFF;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+    }
+    .demo-card:hover {
+      border-color: var(--primary-teal);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+    .demo-card.active {
+      border-color: var(--primary-teal);
+      box-shadow: 0 0 0 2px #2A725D;
+    }
+    .demo-card-img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      display: block;
+      background: #F1F5F9;
+    }
+    .demo-card-info {
+      padding: 0.45rem 0.3rem;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
@@ -183,21 +395,34 @@
     const SendIcon = ({ className = "icon-svg" }) => (
       <svg className={className} viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
     );
+        const CameraIcon = ({ className = "icon-svg" }) => (
+      <svg className={className} viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+    );
     const ArrowRightIcon = ({ className = "icon-svg" }) => (
       <svg className={className} viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
     );
+    const CopyIcon = ({ className = "icon-svg" }) => (
+      <svg className={className} viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+    );
+    const CheckIcon = ({ className = "icon-svg" }) => (
+      <svg className={className} viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    );
+
 
     function Navbar({ activeTab, setActiveTab }) {
       return (
         <nav className="navbar">
           <div className="container nav-content">
             <a href="#" className="brand-logo" onClick={() => setActiveTab('chatbot')}>
-              <img src="/authentic_care_avatar_clean.png" alt="AmiCare Logo" style={{ width: '38px', height: '38px', objectFit: 'contain' }} />
+              <img src="./authentic_care_avatar_clean.png" alt="AmiCare Logo" style={{ width: '38px', height: '38px', objectFit: 'contain' }} />
               <span>AmiCare</span>
             </a>
             <div className="nav-links">
               <button className={`nav-btn ${activeTab === 'chatbot' ? 'active' : ''}`} onClick={() => setActiveTab('chatbot')}>
                 <BotIcon /> AmiCare Assistant
+              </button>
+              <button className={`nav-btn ${activeTab === 'facescan' ? 'active' : ''}`} onClick={() => setActiveTab('facescan')}>
+                <CameraIcon /> Face Wellness Scan
               </button>
               <button className={`nav-btn ${activeTab === 'helplines' ? 'active' : ''}`} onClick={() => setActiveTab('helplines')}>
                 <PhoneIcon /> Helpline DB
@@ -216,14 +441,79 @@
     }
 
     function ChatbotLanding({ onNavigateTab }) {
-      const [messages, setMessages] = useState([
-        {
-          id: 1,
-          sender: 'bot',
-          text: "Welcome to AmiCare! I am your confidential AI mental well-being assistant. I chat with you to listen and continuously self-determine your emotional state of being as we talk. How are you feeling today?",
-          suggested: ["I feel stressed about my exams", "I'm having trouble sleeping", "I feel overwhelmed and anxious", "Start Stress Self-Check"]
+      const STORAGE_KEY = 'amicare_chat_session_v1';
+      const [messages, setMessages] = useState(() => {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) return JSON.parse(saved);
+        } catch (e) {
+          console.warn('Failed to load chat from localStorage', e);
         }
-      ]);
+        return [
+          {
+            id: 1,
+            sender: 'bot',
+            text: "Welcome to AmiCare! I am your confidential AI mental well-being assistant. I chat with you to listen and continuously self-determine your emotional state of being as we talk. How are you feeling today?",
+            suggested: ["Scan My Face for Stress", "I feel stressed about my exams", "I'm having trouble sleeping", "Start Stress Self-Check"]
+          }
+        ];
+      });
+
+      // Persist to localStorage on update
+      useEffect(() => {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+        } catch (e) {
+          console.warn('Failed to save chat to localStorage', e);
+        }
+      }, [messages]);
+
+      const handleClearChat = () => {
+        if (window.confirm("Are you sure you want to clear your current conversation history? This cannot be undone.")) {
+          try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+          setMessages([
+            {
+              id: Date.now(),
+              sender: 'bot',
+              text: "Conversation reset. Welcome back to AmiCare! How are you feeling right now?",
+              suggested: ["Scan My Face for Stress", "I feel stressed about my exams", "Start Stress Self-Check"]
+            }
+          ]);
+        }
+      };
+
+      const handleExportSummary = () => {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const transcript = messages.map(m => `**${m.sender === 'bot' ? 'AmiCare AI' : 'Student'}**: ${m.text}`).join('\n\n');
+        const report = `# AmiCare — Student Wellness Session Report
+**Date**: ${dateStr}
+**Session Baseline Assessment**: ${stateLabel}
+**Stress Severity Level**: ${severity}
+${answers && answers.length > 0 ? `**PSS-4 Assessment**: Completed ${answers.length} items\n` : ''}
+
+---
+
+## 🔒 Confidential Non-Diagnostic Summary
+*Disclaimer: This wellness summary is generated for personal student reflection and self-care tracking. It does NOT constitute a clinical psychological assessment or diagnostic medical record.*
+
+### Conversation Transcript:
+${transcript}
+
+---
+
+### Emergency Crisis Resources:
+- **Tele-MANAS (Govt. of India)**: 14416 / 1800-891-4416 (24/7 Toll-Free)
+- **KIRAN Mental Health Line**: 1800-599-0019 (24/7 Toll-Free)
+- **Vandrevala Foundation**: +91 9999 666 555 (24/7 Free)
+- **Student Campus Line**: 1800-200-CAMPUS
+`;
+        const blob = new Blob([report], { type: 'text/markdown;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `AmiCare_Session_Summary_${now.toISOString().slice(0,10)}.md`;
+        link.click();
+      };
       const [input, setInput] = useState('');
       const [isTyping, setIsTyping] = useState(false);
       const [stateLabel, setStateLabel] = useState("Baseline / Active Listening");
@@ -248,6 +538,11 @@
         setMessages(prev => [...prev, { id: Date.now(), sender: 'user', text: msg }]);
         if (!txt) setInput('');
         setIsTyping(true);
+
+        if (msg.toLowerCase().includes('face') || msg.toLowerCase().includes('camera') || msg.toLowerCase().includes('facial') || msg.toLowerCase().includes('scan my face')) {
+          setTimeout(() => { setIsTyping(false); onNavigateTab('facescan'); }, 500);
+          return;
+        }
 
         if (msg.toLowerCase().includes('check') || msg.toLowerCase().includes('assess') || msg.toLowerCase().includes('start stress')) {
           setTimeout(() => {
@@ -318,22 +613,17 @@
       const scrollToChat = () => { chatSectionRef.current?.scrollIntoView({ behavior: 'smooth' }); };
 
       return (
-        <div className="container" style={{ paddingBottom: '4rem' }}>
-          {/* Top Academic Badges */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap', paddingTop: '2rem' }}>
-            <span className="badge-tag"><ShieldIcon /> Confidential & Non-Diagnostic</span>
-            <span className="badge-tag" style={{ background: '#EBF5F0', color: '#1B4D3E', borderColor: '#C3E2D5' }}><SparklesIcon /> UN SDG 3: Good Health</span>
-            <span className="badge-tag" style={{ background: '#EEF2FF', color: '#3730A3', borderColor: '#C7D2FE' }}>K.R. Mangalam University</span>
-          </div>
-
+        <div className="container" style={{ paddingBottom: '1rem' }}>
           {/* Hero Section */}
           <div className="hero-section">
             <div>
               <h1 className="hero-title" style={{ textAlign: 'left', fontSize: '2.8rem', lineHeight: '1.18', color: 'var(--text-main)' }}>
                 Your Safe Haven for Campus Mental Well-Being
               </h1>
+              <p className="hero-subtitle" style={{ textAlign: 'left', margin: '1.25rem 0 1rem', fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
+                Talk through exam pressure, sleep fatigue, or academic stress. AmiCare offers a safe, confidential space for self-reflection, 24/7 helpline access, and guided mindfulness exercises.</p>
               <p className="hero-subtitle" style={{ textAlign: 'left', margin: '1.25rem 0 2rem', fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
-                Talk through exam pressure, sleep fatigue, or academic stress. AmiCare provides a safe, confidential space for emotional self-reflection, connects you with 24/7 helplines, and guides you through mindfulness exercises.
+                Supporting SDG 3: Good Health and Well-being by making mental health support more accessible and promoting emotional well-being for all.
               </p>
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                 <button className="btn-primary" onClick={scrollToChat}>
@@ -350,7 +640,7 @@
 
             {/* Hero Graphic Card */}
             <div className="hero-graphic-card">
-              <img src="/authentic_student_wellness.jpg" alt="Student Wellness Haven" className="hero-graphic-img" />
+              <img src="./authentic_student_wellness.jpg" alt="Student Wellness Haven" className="hero-graphic-img" />
               <div className="floating-glass-badge" style={{ top: '20px', left: '20px' }}>
                 <div className="logo-icon" style={{ width: '32px', height: '32px', background: '#1B4D3E' }}><PhoneIcon /></div>
                 <div>
@@ -367,35 +657,6 @@
               </div>
             </div>
           </div>
-
-          {/* Quick Stat Cards */}
-          <div className="stat-card-grid">
-            <div className="stat-card">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--primary-teal)', marginBottom: '0.4rem' }}>
-                <ShieldIcon /> <span style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-main)' }}>100% Free</span>
-              </div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Anonymous & confidential student mental support</div>
-            </div>
-            <div className="stat-card">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--primary-teal)', marginBottom: '0.4rem' }}>
-                <PhoneIcon /> <span style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-main)' }}>24/7 Access</span>
-              </div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Direct connection to Tele-MANAS & KIRAN lines</div>
-            </div>
-            <div className="stat-card">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--primary-teal)', marginBottom: '0.4rem' }}>
-                <WindIcon /> <span style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-main)' }}>4-4-4-4 Rhythm</span>
-              </div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Guided Box Breathing for exam panic relief</div>
-            </div>
-            <div className="stat-card">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--primary-teal)', marginBottom: '0.4rem' }}>
-                <BookIcon /> <span style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-main)' }}>5-4-3-2-1 Tool</span>
-              </div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Sensory grounding exercise for acute stress</div>
-            </div>
-          </div>
-
           {/* Feature Showcase Grid */}
           <div style={{ margin: '3.5rem 0 2.5rem' }}>
             <h2 style={{ textAlign: 'center', fontSize: '2.2rem', marginBottom: '0.5rem' }}>Platform Features & Support Tools</h2>
@@ -494,7 +755,7 @@
               {/* Chat Header */}
               <div className="chat-header">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-                  <img src="/authentic_care_avatar.jpg" alt="AmiCare Companion Avatar" style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--primary-teal)' }} />
+                  <img src="./authentic_care_avatar.jpg" alt="AmiCare Companion Avatar" style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--primary-teal)' }} />
                   <div>
                     <h3 style={{ fontSize: '1.1rem', color: 'var(--text-main)' }}>AmiCare Companion</h3>
                     <div style={{ fontSize: '0.78rem', color: 'var(--primary-teal)', display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 600 }}>
@@ -518,7 +779,7 @@
                           <UserIcon />
                         </div>
                       ) : (
-                        <img src="/authentic_care_avatar.jpg" alt="Avatar" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: '1px solid var(--primary-teal)' }} />
+                        <img src="./authentic_care_avatar.jpg" alt="Avatar" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: '1px solid var(--primary-teal)' }} />
                       )}
                       <div className={`chat-bubble ${m.sender === 'user' ? 'user' : ''}`}>
                         {m.text}
@@ -578,31 +839,153 @@
     }
 
     function Helplines() {
+      const [copiedIdx, setCopiedIdx] = useState(null);
+
       const list = [
-        { name: "Tele-MANAS (Govt. of India)", num: "14416 / 1800-891-4416", cat: "24/7 Crisis Helpline", desc: "National tele-mental health helpline providing 24/7 confidential support across India.", hours: "24/7", lang: "English, Hindi, Regional" },
-        { name: "KIRAN Mental Health Helpline", num: "1800-599-0019", cat: "24/7 Crisis Helpline", desc: "Toll-free mental health rehabilitation helpline by Ministry of Social Justice.", hours: "24/7", lang: "English, Hindi, 13 Regional" },
-        { name: "Vandrevala Foundation", num: "+91 9999 666 555", cat: "Tele-Therapy & Counseling", desc: "Free 24x7 emotional support and counseling by trained professionals.", hours: "24/7", lang: "English, Hindi, Gujarati, Marathi" },
-        { name: "Student Wellness Line", num: "1800-200-CAMPUS", cat: "Student Counseling", desc: "Dedicated campus stress helpline offering empathetic peer listener support.", hours: "8 AM - 10 PM", lang: "English, Hindi" }
+        { 
+          name: "Tele-MANAS (Govt. of India)", 
+          num: "14416 / 1800-891-4416", 
+          primaryCall: "14416",
+          cat: "24/7 Crisis Helpline", 
+          desc: "National tele-mental health helpline providing 24/7 confidential support across India.", 
+          hours: "24/7 Round-the-Clock", 
+          lang: "English, Hindi & 20+ Languages" 
+        },
+        { 
+          name: "KIRAN Mental Health Helpline", 
+          num: "1800-599-0019", 
+          primaryCall: "18005990019",
+          cat: "24/7 Crisis Helpline", 
+          desc: "Toll-free mental health rehabilitation helpline by Ministry of Social Justice.", 
+          hours: "24/7 Toll-Free", 
+          lang: "English, Hindi, 13 Regional" 
+        },
+        { 
+          name: "Vandrevala Foundation", 
+          num: "+91 9999 666 555", 
+          primaryCall: "+919999666555",
+          cat: "Tele-Therapy & Counseling", 
+          desc: "Free 24x7 emotional support and counseling by trained professionals.", 
+          hours: "24/7 Free Counseling", 
+          lang: "English, Hindi, Gujarati, Marathi" 
+        },
+        { 
+          name: "Student Wellness Line", 
+          num: "1800-200-CAMPUS", 
+          primaryCall: "18002002267",
+          cat: "Student Counseling", 
+          desc: "Dedicated campus stress helpline offering empathetic peer listener support.", 
+          hours: "8 AM - 10 PM", 
+          lang: "English, Hindi" 
+        }
       ];
 
+      const handleCopy = (num, idx) => {
+        const textToCopy = num.replace(/\s+/g, ' ').trim();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(textToCopy).then(() => {
+            setCopiedIdx(idx);
+            setTimeout(() => setCopiedIdx(null), 2000);
+          }).catch(() => fallbackCopy(textToCopy, idx));
+        } else {
+          fallbackCopy(textToCopy, idx);
+        }
+      };
+
+      const fallbackCopy = (text, idx) => {
+        try {
+          const el = document.createElement('textarea');
+          el.value = text;
+          document.body.appendChild(el);
+          el.select();
+          document.execCommand('copy');
+          document.body.removeChild(el);
+          setCopiedIdx(idx);
+          setTimeout(() => setCopiedIdx(null), 2000);
+        } catch (e) {
+          console.error(e);
+        }
+      };
+
       return (
-        <div className="container" style={{ paddingBottom: '4rem' }}>
-          <h2 style={{ textAlign: 'center', fontSize: '2.2rem', marginBottom: '0.5rem' }}>Verified Student Referral Database</h2>
-          <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '2rem' }}>Direct connection to 24/7 crisis lines and campus counseling services.</p>
+        <div className="container" style={{ paddingBottom: '3rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+            <span className="badge-tag" style={{ marginBottom: '0.75rem' }}>
+              <ShieldIcon /> Verified Student Referral Directory
+            </span>
+            <h1 className="hero-title" style={{ fontSize: '2.4rem' }}>Verified Mental Health Helplines</h1>
+            <p className="hero-subtitle" style={{ margin: '0.5rem auto 1rem', maxWidth: '680px' }}>
+              Direct, 100% confidential connection to emergency crisis lines, campus student counseling, and professional emotional therapy.
+            </p>
+          </div>
+
           <div className="helpline-grid">
             {list.map((h, i) => (
               <div key={i} className="glass-card helpline-card">
                 <div>
-                  <span className="helpline-category-tag">{h.cat}</span>
-                  <h3 style={{ marginTop: '0.5rem' }}>{h.name}</h3>
-                  <div style={{ color: 'var(--primary-light)', fontSize: '1.2rem', fontWeight: 700, margin: '0.4rem 0', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                    <PhoneIcon /> {h.num}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <span className="helpline-category-tag">
+                      <ShieldIcon className="icon-svg" /> {h.cat}
+                    </span>
+                    <span className="helpline-meta-pill">
+                      {h.hours}
+                    </span>
                   </div>
-                  <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{h.desc}</p>
+
+                  <h3 style={{ fontSize: '1.25rem', margin: '0.35rem 0 0.5rem', color: 'var(--text-main)' }}>{h.name}</h3>
+                  
+                  <div className="helpline-phone-box">
+                    <div className="helpline-phone-num">
+                      <PhoneIcon className="icon-svg large" />
+                      <span>{h.num}</span>
+                    </div>
+                  </div>
+
+                  <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{h.desc}</p>
+                  
+                  <div style={{ marginTop: '0.75rem', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    <strong>Languages:</strong> {h.lang}
+                  </div>
                 </div>
-                <a href={`tel:${h.num.split('/')[0]}`} className="call-btn" style={{ marginTop: '1rem' }}><PhoneIcon /> Call Helpline</a>
+
+                <div className="helpline-actions">
+                  <a href={`tel:${h.primaryCall || h.num.split('/')[0].trim()}`} className="call-btn">
+                    <PhoneIcon /> Call Helpline
+                  </a>
+                  <button 
+                    type="button"
+                    className={`copy-btn ${copiedIdx === i ? 'copied' : ''}`}
+                    onClick={() => handleCopy(h.num, i)}
+                    title="Copy phone number to clipboard"
+                  >
+                    {copiedIdx === i ? (
+                      <>
+                        <CheckIcon /> Copied!
+                      </>
+                    ) : (
+                      <>
+                        <CopyIcon /> Copy
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             ))}
+          </div>
+
+          {/* Urgent Crisis Guidance Banner */}
+          <div style={{ marginTop: '3rem', background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: 'var(--radius-lg)', padding: '1.5rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.25rem' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#991B1B', fontWeight: 800, fontSize: '1.1rem' }}>
+                <PhoneIcon /> In Urgent Crisis or Severe Distress?
+              </div>
+              <p style={{ color: '#7F1D1D', fontSize: '0.92rem', marginTop: '0.25rem' }}>
+                Call Tele-MANAS toll-free at <strong>14416</strong> or KIRAN at <strong>1800-599-0019</strong>. Support is immediate, free, and strictly confidential across India.
+              </p>
+            </div>
+            <a href="tel:14416" className="btn-primary" style={{ background: '#DC2626', borderColor: '#B91C1C', boxShadow: '0 4px 14px rgba(220, 38, 38, 0.35)' }}>
+              <PhoneIcon /> Call 14416 Now
+            </a>
           </div>
         </div>
       );
@@ -615,20 +998,37 @@
       useEffect(() => {
         let t = null;
         if (active) {
+          setPhase('Inhale');
           t = setInterval(() => {
             setPhase(p => p === 'Inhale' ? 'Hold' : p === 'Hold' ? 'Exhale' : 'Inhale');
           }, 4000);
+        } else {
+          setPhase('Inhale');
         }
         return () => clearInterval(t);
       }, [active]);
 
+      const getPhaseClass = () => {
+        if (!active) return '';
+        if (phase === 'Inhale') return 'expand';
+        if (phase === 'Hold') return 'hold';
+        return 'shrink';
+      };
+
       return (
-        <div className="container" style={{ maxWidth: '650px', paddingBottom: '4rem', textAlign: 'center' }}>
+        <div className="container" style={{ maxWidth: '650px', paddingBottom: '1.5rem', textAlign: 'center' }}>
           <div className="glass-card" style={{ padding: '3rem 2rem' }}>
-            <h2>Guided Box Breathing (4-4-4-4)</h2>
-            <p style={{ color: 'var(--text-secondary)', margin: '0.5rem 0 1.5rem' }}>Follow the rhythm to reduce acute exam anxiety and physical tension.</p>
-            <div className={`breathing-box ${active ? (phase === 'Inhale' ? 'expand' : 'shrink') : ''}`}>
-              {active ? phase : 'Ready'}
+            <h2>Guided Box Breathing</h2>
+            <p style={{ color: 'var(--text-secondary)', margin: '0.5rem 0 1.25rem' }}>Follow the rhythm to reduce acute exam anxiety and physical tension.</p>
+            <div className="breathing-wrapper">
+              <div className={`breathing-box ${getPhaseClass()}`}>
+                <span style={{ display: 'block', fontSize: '1.45rem', fontWeight: 700 }}>{active ? phase : 'Ready'}</span>
+                {active && (
+                  <span style={{ display: 'block', fontSize: '0.82rem', opacity: 0.88, fontWeight: 500, marginTop: '0.3rem' }}>
+                    {phase === 'Inhale' ? 'Breathe in slowly' : phase === 'Hold' ? 'Hold gently' : 'Release slowly'}
+                  </span>
+                )}
+              </div>
             </div>
             <button className="btn-primary" onClick={() => setActive(!active)}>
               <WindIcon /> {active ? 'Pause Exercise' : 'Begin Breathing'}
@@ -650,7 +1050,7 @@
       const cur = grounding.find(g => g.s === step);
 
       return (
-        <div className="container" style={{ paddingBottom: '4rem' }}>
+        <div className="container" style={{ paddingBottom: '1.5rem' }}>
           <h2 style={{ textAlign: 'center', fontSize: '2.2rem', marginBottom: '0.5rem' }}>Student Self-Care & Resilience Hub</h2>
           <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '2rem' }}>Interactive anxiety reduction tools and grounding exercises.</p>
 
@@ -668,12 +1068,519 @@
       );
     }
 
+
+    function FaceStressScan({ onNavigateTab }) {
+      const [cameraActive, setCameraActive] = useState(false);
+      const [loading, setLoading] = useState(false);
+      const [errorMsg, setErrorMsg] = useState(null);
+      const [statusMsg, setStatusMsg] = useState(null);
+      const [scanResult, setScanResult] = useState(null);
+      const [activeDemoId, setActiveDemoId] = useState(null);
+      const [viewMode, setViewMode] = useState('live'); // 'live' or 'annotated'
+      const [flash, setFlash] = useState(false);
+      const [lastCaptureTime, setLastCaptureTime] = useState(null);
+
+      const videoRef = useRef(null);
+      const canvasRef = useRef(null);
+      const streamRef = useRef(null);
+
+      const demoSamples = [
+        { id: 'sample_happy', label: 'Joyful & Relaxed', file: './sample_happy.jpg', tag: 'Happy 😄', color: '#166534', bg: '#DCFCE7' },
+        { id: 'sample_well', label: 'Calm & Balanced', file: './sample_well.jpg', tag: 'Well 🌿', color: '#1B4D3E', bg: '#EBF5F0' },
+        { id: 'sample_sad', label: 'Subdued & Weary', file: './sample_sad.jpg', tag: 'Sad 😢', color: '#92400E', bg: '#FEF3C7' },
+        { id: 'student_wellness', label: 'Acute Exam Strain', file: './authentic_student_wellness.jpg', tag: 'Stressed ⚡', color: '#991B1B', bg: '#FEE2E2' }
+      ];
+
+      // Auto cleanup camera on unmount
+      useEffect(() => {
+        return () => {
+          stopCamera();
+        };
+      }, []);
+
+      const startCamera = async () => {
+        try {
+          setErrorMsg(null);
+          setStatusMsg("Initializing camera stream...");
+          setActiveDemoId(null);
+          setViewMode('live');
+
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' }
+          });
+          streamRef.current = stream;
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+            videoRef.current.onloadedmetadata = () => {
+              videoRef.current.play().catch(e => console.error(e));
+              setStatusMsg("Camera active! Click 'Capture & Analyze Face' below to examine stress.");
+            };
+          }
+          setCameraActive(true);
+        } catch (err) {
+          console.error("Camera error:", err);
+          setCameraActive(false);
+          setStatusMsg(null);
+          setErrorMsg("Webcam access was not granted or webcam device is unavailable. You can upload any student photo or selfie above to examine facial stress and tension.");
+        }
+      };
+
+      const stopCamera = () => {
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
+          streamRef.current = null;
+        }
+        if (videoRef.current) {
+          videoRef.current.srcObject = null;
+        }
+        setCameraActive(false);
+        setStatusMsg(null);
+      };
+
+      // Trigger photo capture with flash effect and send to backend
+      const captureAndAnalyze = () => {
+        if (!videoRef.current || !canvasRef.current) {
+          setErrorMsg("Camera viewfinder not initialized.");
+          return;
+        }
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+
+        if (video.videoWidth === 0 || video.videoHeight === 0) {
+          setErrorMsg("Camera is still warming up. Please wait 1 second and click Capture again.");
+          return;
+        }
+
+        // Trigger visible shutter flash
+        setFlash(true);
+        setTimeout(() => setFlash(false), 350);
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const b64Image = canvas.toDataURL('image/jpeg', 0.88);
+        const timeStr = new Date().toLocaleTimeString();
+        setLastCaptureTime(timeStr);
+        setStatusMsg(`📸 Photo captured at ${timeStr}! OpenCV is analyzing facial stress...`);
+
+        sendFrameToBackend(b64Image);
+      };
+
+      const sendFrameToBackend = async (b64Data) => {
+        if (!b64Data) return;
+        setLoading(true);
+        setErrorMsg(null);
+        try {
+          const res = await fetch('/api/face-scan/analyze-frame', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: b64Data })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setScanResult(data);
+            setViewMode('annotated');
+            if (data.face_detected) {
+              setStatusMsg(`✓ Scan complete! Face detected: ${data.emotion} (${data.stress_score}% stress)`);
+            } else {
+              setStatusMsg("No face detected in the captured photo. Please face the camera directly in good lighting.");
+            }
+          } else {
+            const err = await res.json();
+            setErrorMsg(err.detail || "Error evaluating face frame.");
+            setStatusMsg(null);
+          }
+        } catch (e) {
+          console.error("Backend scan error:", e);
+          setErrorMsg("Failed to communicate with AmiCare OpenCV backend. Please ensure the backend is running.");
+          setStatusMsg(null);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      // Handle clicking demo sample cards
+      const handleDemoClick = async (demo) => {
+        stopCamera();
+        setActiveDemoId(demo.id);
+        setErrorMsg(null);
+        setLoading(true);
+        setStatusMsg(`Loading ${demo.label} and analyzing with OpenCV...`);
+        setViewMode('annotated');
+
+        try {
+          const res = await fetch(demo.file);
+          if (!res.ok) throw new Error(`Could not load ${demo.file}`);
+          const blob = await res.blob();
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const b64 = reader.result;
+            const timeStr = new Date().toLocaleTimeString();
+            setLastCaptureTime(timeStr);
+            sendFrameToBackend(b64);
+          };
+          reader.readAsDataURL(blob);
+        } catch (err) {
+          console.error("Demo load error:", err);
+          setErrorMsg(`Could not load demo image ${demo.file}.`);
+          setLoading(false);
+          setStatusMsg(null);
+        }
+      };
+
+      // Handle file upload
+      const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        stopCamera();
+        setActiveDemoId(null);
+        setErrorMsg(null);
+        setLoading(true);
+        setStatusMsg(`Uploading ${file.name} and analyzing with OpenCV...`);
+        setViewMode('annotated');
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const timeStr = new Date().toLocaleTimeString();
+          setLastCaptureTime(timeStr);
+          sendFrameToBackend(reader.result);
+        };
+        reader.readAsDataURL(file);
+      };
+
+      const getEmotionBadgeClass = (em) => {
+        if (em === 'Happy') return 'badge-happy';
+        if (em === 'Well') return 'badge-well';
+        if (em === 'Sad') return 'badge-sad';
+        return 'badge-stressed';
+      };
+
+      const getEmotionTitle = (em) => {
+        if (em === 'Happy') return 'Happy & Joyful 😄';
+        if (em === 'Well') return 'Well & Balanced 🌿';
+        if (em === 'Sad') return 'Sad / Subdued 😢';
+        if (em === 'Stressed') return 'Stressed / Elevated Tension ⚡';
+        return 'Analyzing Biometrics...';
+      };
+
+      const getStressColor = (score) => {
+        if (score < 30) return '#10B981';
+        if (score < 50) return '#0D9488';
+        if (score < 70) return '#F59E0B';
+        return '#EF4444';
+      };
+
+      return (
+        <div className="container" style={{ paddingBottom: '1.5rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <span className="badge-tag" style={{ marginBottom: '0.75rem' }}>
+              <CameraIcon /> OpenCV Deep Facial Wellness Examination
+            </span>
+            <h1 className="hero-title" style={{ fontSize: '2.4rem' }}>AI Face Stress & Emotion Scanner</h1>
+            <p className="hero-subtitle" style={{ margin: '0.5rem auto 1.5rem', maxWidth: '720px' }}>
+              Evaluates brow furrow tension (cranial strain), smile curvature, and eye fatigue in real-time to assess whether a student is Well, Happy, Sad, or Stressed.
+            </p>
+          </div>
+
+          <div className="face-scan-grid">
+            {/* Left Column: Camera / Frame Preview */}
+            <div className="glass-card" style={{ padding: '1.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h3 style={{ fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <CameraIcon /> Scanner Viewport
+                </h3>
+                {cameraActive && (
+                  <span style={{ fontSize: '0.8rem', background: '#DCFCE7', color: '#166534', padding: '0.2rem 0.6rem', borderRadius: '12px', fontWeight: 600 }}>
+                    ● LIVE CAMERA ACTIVE
+                  </span>
+                )}
+              </div>
+
+              {/* Viewport Display */}
+              <div className="camera-box">
+                {/* Laser scan line while analyzing */}
+                {loading && <div className="scanning-laser" />}
+
+                {/* Shutter flash effect */}
+                {flash && <div className="camera-flash" />}
+
+                {/* Video element is ALWAYS mounted when cameraActive */}
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="camera-video"
+                  style={{
+                    display: (cameraActive && (viewMode === 'live' || !scanResult)) ? 'block' : 'none'
+                  }}
+                />
+
+                {/* If showing OpenCV annotated scan result */}
+                {scanResult && scanResult.annotated_image && (!cameraActive || viewMode === 'annotated') && (
+                  <img
+                    src={scanResult.annotated_image}
+                    alt="OpenCV HUD Annotated View"
+                    className="camera-video"
+                  />
+                )}
+
+                {/* Camera off / empty state */}
+                {!cameraActive && !scanResult && (
+                  <div className="camera-placeholder">
+                    <div style={{ width: '64px', height: '64px', margin: '0 auto 1rem', background: 'rgba(255,255,255,0.08)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <CameraIcon className="icon-svg large" />
+                    </div>
+                    <h4 style={{ color: '#F1F5F9', marginBottom: '0.5rem' }}>Camera Ready to Scan</h4>
+                    <p style={{ fontSize: '0.88rem', color: '#94A3B8', maxWidth: '340px', margin: '0 auto' }}>
+                      Start your camera to analyze stress live, or choose one of the sample student portraits below.
+                    </p>
+                  </div>
+                )}
+
+                {/* Floating status tag */}
+                {loading && (
+                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(0,0,0,0.75)', color: 'white', padding: '0.35rem 0.85rem', borderRadius: '20px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.45rem', backdropFilter: 'blur(6px)', zIndex: 30 }}>
+                    <SparklesIcon /> OpenCV Processing...
+                  </div>
+                )}
+              </div>
+              <canvas ref={canvasRef} style={{ display: 'none' }} />
+
+              {/* View Mode Switcher if both camera is on AND a scanResult exists */}
+              {cameraActive && scanResult && (
+                <div style={{ marginTop: '0.85rem', display: 'flex', gap: '0.5rem', background: '#F1F5F9', padding: '0.3rem', borderRadius: 'var(--radius-full)' }}>
+                  <button
+                    className={`nav-btn ${viewMode === 'live' ? 'active' : ''}`}
+                    style={{ flex: 1, padding: '0.4rem', justifyContent: 'center', fontSize: '0.82rem' }}
+                    onClick={() => setViewMode('live')}
+                  >
+                    🎥 View Live Camera
+                  </button>
+                  <button
+                    className={`nav-btn ${viewMode === 'annotated' ? 'active' : ''}`}
+                    style={{ flex: 1, padding: '0.4rem', justifyContent: 'center', fontSize: '0.82rem' }}
+                    onClick={() => setViewMode('annotated')}
+                  >
+                    🔍 View OpenCV Scan Result
+                  </button>
+                </div>
+              )}
+
+              {/* Controls Toolbar */}
+              <div style={{ marginTop: '1.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
+                  {!cameraActive ? (
+                    <button className="btn-primary" onClick={startCamera}>
+                      <CameraIcon /> Start Camera
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        className="btn-primary"
+                        onClick={captureAndAnalyze}
+                        disabled={loading}
+                        style={{ background: '#2563EB', boxShadow: '0 4px 14px rgba(37,99,235,0.3)' }}
+                      >
+                        <CameraIcon /> Capture & Analyze Photo
+                      </button>
+                      <button className="btn-secondary" onClick={stopCamera} style={{ background: '#FEF2F2', color: '#991B1B', borderColor: '#FCA5A5' }}>
+                        Stop Camera
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                <div>
+                  <label className="btn-secondary" style={{ padding: '0.65rem 1.2rem', fontSize: '0.88rem', cursor: 'pointer' }}>
+                    Upload Photo
+                    <input type="file" accept="image/*" onChange={handleFileUpload} style={{ display: 'none' }} />
+                  </label>
+                </div>
+              </div>
+
+              {/* Status Message / Notification */}
+              {statusMsg && (
+                <div style={{ marginTop: '0.9rem', background: '#EBF5F0', border: '1px solid #C3E2D5', color: '#1B4D3E', padding: '0.65rem 1rem', borderRadius: '8px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <SparklesIcon /> {statusMsg}
+                </div>
+              )}
+
+              {errorMsg && (
+                <div style={{ marginTop: '0.9rem', background: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '0.65rem 1rem', borderRadius: '8px', fontSize: '0.85rem' }}>
+                  {errorMsg}
+                </div>
+              )}
+
+
+            </div>
+
+            {/* Right Column: Diagnostic HUD & Recommendations */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {scanResult && scanResult.face_detected ? (
+                <>
+                  {/* Primary Emotion Status Card */}
+                  <div className="glass-card" style={{ padding: '1.75rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span className={`metric-badge ${getEmotionBadgeClass(scanResult.emotion)}`}>
+                        {scanResult.emotion.toUpperCase()} STATE
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        {scanResult.database_synced && (
+                          <span style={{ fontSize: '0.74rem', background: '#EBF5F0', color: '#1B4D3E', padding: '0.2rem 0.55rem', borderRadius: '4px', fontWeight: 700, border: '1px solid #C3E2D5' }}>
+                            ✓ amicare.db Logged #{scanResult.record_id}
+                          </span>
+                        )}
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                          Confidence: {Math.round((scanResult.confidence || 0.88) * 100)}%
+                        </span>
+                      </div>
+                    </div>
+
+                    <h2 style={{ fontSize: '1.9rem', margin: '0.85rem 0 0.25rem' }}>
+                      {getEmotionTitle(scanResult.emotion)}
+                    </h2>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+                      {scanResult.state_label}
+                    </p>
+
+                    {/* Stress Meter */}
+                    <div style={{ marginTop: '1.5rem', background: '#FAFBF9', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.9rem', fontWeight: 700 }}>Facial Stress Index</span>
+                        <span style={{ fontSize: '1.2rem', fontWeight: 800, color: getStressColor(scanResult.stress_score) }}>
+                          {scanResult.stress_score}% ({scanResult.stress_level})
+                        </span>
+                      </div>
+                      <div className="stress-bar-outer">
+                        <div
+                          className="stress-bar-inner"
+                          style={{
+                            width: `${scanResult.stress_score}%`,
+                            backgroundColor: getStressColor(scanResult.stress_score)
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Facial Indicators Breakdown */}
+                  <div className="glass-card" style={{ padding: '1.75rem' }}>
+                    <h3 style={{ fontSize: '1.15rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <SparklesIcon /> Facial Indicators Analysis
+                    </h3>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.9rem' }}>
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                          <span style={{ color: 'var(--text-secondary)' }}>Forehead Brow Furrow Strain</span>
+                          <span style={{ fontWeight: 700 }}>{scanResult.indicators.forehead_tension_percent || 0}%</span>
+                        </div>
+                        <div style={{ height: '6px', background: '#E2E8F0', borderRadius: '4px', overflow: 'hidden' }}>
+                          <div style={{ height: '100%', width: `${scanResult.indicators.forehead_tension_percent || 0}%`, background: '#C2410C' }} />
+                        </div>
+                      </div>
+
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                          <span style={{ color: 'var(--text-secondary)' }}>Smile & Mouth Valence Ratio</span>
+                          <span style={{ fontWeight: 700 }}>{scanResult.indicators.smile_ratio || 0}</span>
+                        </div>
+                        <div style={{ height: '6px', background: '#E2E8F0', borderRadius: '4px', overflow: 'hidden' }}>
+                          <div style={{ height: '100%', width: `${Math.min(100, ((scanResult.indicators.smile_ratio || 0) / 1.1) * 100)}%`, background: '#2A725D' }} />
+                        </div>
+                      </div>
+
+                      <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '0.75rem', marginTop: '0.25rem' }}>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>PRIMARY BIOMETRIC CUE</div>
+                        <div style={{ fontWeight: 600, color: 'var(--text-main)', marginTop: '0.25rem' }}>
+                          {scanResult.primary_indicator}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* AmiCare Personalized Guidance */}
+                  <div className="glass-card" style={{ padding: '1.75rem', background: '#F8FAF9', borderColor: '#C3E2D5' }}>
+                    <h4 style={{ fontSize: '1.05rem', color: 'var(--primary-teal)', display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.65rem' }}>
+                      <HeartIcon /> AmiCare Adaptive Coping Guidance
+                    </h4>
+                    <p style={{ fontSize: '0.92rem', color: 'var(--text-main)', lineHeight: '1.5', marginBottom: '1.25rem' }}>
+                      {scanResult.recommendation}
+                    </p>
+
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
+                      {scanResult.emotion === 'Stressed' && (
+                        <button className="btn-primary" onClick={() => onNavigateTab('breathing')}>
+                          <WindIcon /> Start Box Breathing
+                        </button>
+                      )}
+                      {scanResult.emotion === 'Sad' && (
+                        <button className="btn-primary" onClick={() => onNavigateTab('helplines')}>
+                          <PhoneIcon /> View Emergency Helplines
+                        </button>
+                      )}
+                      <button className="btn-secondary" onClick={() => onNavigateTab('chatbot')}>
+                        <BotIcon /> Discuss with AmiCare AI
+                      </button>
+                    </div>
+
+                    {scanResult.recommended_helplines && scanResult.recommended_helplines.length > 0 && (
+                      <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)' }}>
+                        <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <PhoneIcon className="icon-svg" /> Verified Support Lines (from Database)
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                          {scanResult.recommended_helplines.map((h, idx) => (
+                            <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '0.55rem 0.85rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                              <div>
+                                <span style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-main)' }}>{h.name}</span>
+                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '0.5rem' }}>({h.category})</span>
+                              </div>
+                              <a href={`tel:${h.number.split('/')[0].trim()}`} className="btn-secondary" style={{ padding: '0.3rem 0.65rem', fontSize: '0.78rem', textDecoration: 'none' }}>
+                                <PhoneIcon className="icon-svg" /> {h.number.split('/')[0].trim()}
+                              </a>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="glass-card" style={{ padding: '2.5rem 1.75rem', textAlign: 'center' }}>
+                  <div style={{ width: '56px', height: '56px', margin: '0 auto 1.25rem', background: '#EBF5F0', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary-teal)' }}>
+                    <CameraIcon className="icon-svg large" />
+                  </div>
+                  <h3 style={{ fontSize: '1.25rem', marginBottom: '0.6rem' }}>Facial Analysis Awaiting Input</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '1.5rem' }}>
+                    Start your camera or upload a student portrait above to examine facial tension and emotional state with OpenCV.
+                  </p>
+                  <div style={{ background: '#FAFBF9', border: '1px solid var(--glass-border)', padding: '1rem', borderRadius: 'var(--radius-md)', textAlign: 'left', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    <strong>How OpenCV evaluates stress:</strong>
+                    <ul style={{ paddingLeft: '1.2rem', marginTop: '0.5rem', lineHeight: '1.6' }}>
+                      <li><strong>Brow Furrowing:</strong> Measures micro-wrinkles and muscle contraction above the nose.</li>
+                      <li><strong>Smile Valence:</strong> Compares mouth corner elevation against eye width.</li>
+                      <li><strong>Stress Level:</strong> Classifies student into Well, Happy, Sad, or Stressed.</li>
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     function App() {
       const [tab, setTab] = useState('chatbot');
       return (
         <div>
           <Navbar activeTab={tab} setActiveTab={setTab} />
           {tab === 'chatbot' && <ChatbotLanding onNavigateTab={setTab} />}
+          {tab === 'facescan' && <FaceStressScan onNavigateTab={setTab} />}
           {tab === 'helplines' && <Helplines />}
           {tab === 'breathing' && <Breathing />}
           {tab === 'resources' && <Resources />}
@@ -681,10 +1588,6 @@
           <footer className="footer container">
             <div className="disclaimer-box">
               <strong>Non-Diagnostic Disclaimer:</strong> AmiCare is designed solely as a conversational self-reflection tool and helpline referral directory for students. If in emergency crisis, call 14416 (Tele-MANAS) or 1800-599-0019 (KIRAN).
-            </div>
-            <div style={{ textAlign: 'center', fontSize: '0.85rem' }}>
-              <p><strong>K.R. Mangalam University — Community Service Project</strong> | Faculty Mentor: Dr. Pinky Kumari</p>
-              <p>Team: Harsh Dev Jha, Ishan Rawat, Hrijul Bharadwaj, Akshay Kumar, Anvesha Saxena</p>
             </div>
           </footer>
         </div>
