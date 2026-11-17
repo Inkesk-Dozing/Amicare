@@ -1,10 +1,11 @@
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 from app.database import engine, Base
 from app.seed_data import seed_database
-from app.routers import assessment, helplines, resources, chat
+from app.routers import assessment, helplines, resources, chat, face_scan
 
 # Ensure database tables exist and seed on startup
 Base.metadata.create_all(bind=engine)
@@ -15,12 +16,12 @@ except Exception as e:
 
 app = FastAPI(
     title="AmiCare API",
-    description="Non-diagnostic Stress Self-Assessment & Support Helpline Referral System API",
-    version="1.0.0"
+    description="Non-diagnostic Stress Self-Assessment & Support Helpline Referral System API with OpenCV Facial Stress Examination",
+    version="1.1.0"
 )
 
 # CORS middleware
-origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
+origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8000,http://127.0.0.1:8000,*").split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -34,11 +35,44 @@ app.include_router(chat.router)
 app.include_router(assessment.router)
 app.include_router(helplines.router)
 app.include_router(resources.router)
+app.include_router(face_scan.router)
 
 @app.get("/api/health", tags=["Health"])
 def health_check():
     return {
         "status": "healthy",
-        "service": "AmiCare Backend",
-        "version": "1.0.0"
+        "service": "AmiCare Backend with OpenCV Facial Wellness Examination",
+        "version": "1.1.0"
     }
+
+# Mount Frontend static files
+frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend"))
+if os.path.exists(frontend_dir):
+    # Route for root /
+    @app.get("/", include_in_schema=False)
+    def serve_frontend_root():
+        index_file = os.path.join(frontend_dir, "index.html")
+        return FileResponse(index_file)
+
+    # Route for static assets directly
+    @app.get("/{filename:path}", include_in_schema=False)
+    def serve_frontend_files(filename: str):
+        # Don't intercept API routes or docs
+        if filename.startswith("api/") or filename.startswith("docs") or filename == "openapi.json":
+            raise HTTPException(status_code=404, detail="Not Found")
+        
+        file_path = os.path.join(frontend_dir, filename)
+        if os.path.isfile(file_path):
+            return FileResponse(file_path)
+            
+        public_path = os.path.join(frontend_dir, "public", filename)
+        if os.path.isfile(public_path):
+            return FileResponse(public_path)
+            
+        # If it's a media asset file, return 404 rather than fallback to index.html
+        ext = os.path.splitext(filename)[1].lower()
+        if ext in [".png", ".jpg", ".jpeg", ".ico", ".svg", ".css", ".js", ".json"]:
+            raise HTTPException(status_code=404, detail=f"Asset {filename} not found")
+
+        # Fallback to index.html for client-side routing
+        return FileResponse(os.path.join(frontend_dir, "index.html"))
