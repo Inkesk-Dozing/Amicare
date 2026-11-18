@@ -96,6 +96,9 @@ def _save_scan_to_db(result: Dict[str, Any], session_id: str, db: Session):
     else:
         result["recommended_helplines"] = []
 
+MAX_PAYLOAD_BYTES = 10 * 1024 * 1024  # 10 MB payload boundary
+ALLOWED_UPLOAD_MIME_TYPES = {"image/jpeg", "image/png", "image/webp", "image/jpg"}
+
 @router.post("/analyze-frame", response_model=FaceScanResponse)
 def analyze_camera_frame(payload: FrameAnalysisRequest, db: Session = Depends(get_db)):
     """
@@ -104,6 +107,10 @@ def analyze_camera_frame(payload: FrameAnalysisRequest, db: Session = Depends(ge
     """
     if not payload.image:
         raise HTTPException(status_code=400, detail="No image data provided.")
+
+    # Guard against oversized payloads (DOS mitigation)
+    if len(payload.image) > MAX_PAYLOAD_BYTES:
+        raise HTTPException(status_code=413, detail="Image payload exceeds maximum allowed size (10MB).")
 
     bgr_img = analyzer.decode_image_from_base64(payload.image)
     if bgr_img is None:
@@ -118,7 +125,13 @@ async def upload_face_image(file: UploadFile = File(...), db: Session = Depends(
     """
     Upload a student photo or selfie to examine facial stress and log results into the database.
     """
+    if file.content_type and file.content_type not in ALLOWED_UPLOAD_MIME_TYPES:
+        raise HTTPException(status_code=415, detail="Unsupported media format. Please upload a JPEG, PNG, or WebP photo.")
+
     contents = await file.read()
+    if len(contents) > MAX_PAYLOAD_BYTES:
+        raise HTTPException(status_code=413, detail="File size exceeds maximum allowed limit (10MB).")
+
     nparr = np.frombuffer(contents, np.uint8)
     bgr_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
@@ -189,6 +202,12 @@ def generate_webcam_stream():
 
 @router.get("/video_feed")
 def live_video_feed():
+    import os
+    if os.getenv("ENABLE_SERVER_CAMERA", "false").lower() != "true":
+        raise HTTPException(
+            status_code=403,
+            detail="Server-side hardware camera streaming is disabled for privacy and security. The web client captures frames locally."
+        )
     return StreamingResponse(
         generate_webcam_stream(),
         media_type="multipart/x-mixed-replace; boundary=frame"

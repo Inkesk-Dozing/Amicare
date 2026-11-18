@@ -408,6 +408,20 @@
       <svg className={className} viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     );
 
+    // Intelligent API endpoint resolution for local dev & production
+    function getApiUrl(endpoint) {
+      const host = window.location.hostname;
+      // In production or hosted cloud (e.g. *.vercel.app), use relative path
+      if (host && !['localhost', '127.0.0.1', ''].includes(host)) {
+        return endpoint;
+      }
+      // If served directly from FastAPI backend port 8000, use relative path
+      if (window.location.port === '8000') {
+        return endpoint;
+      }
+      // If running on dev server (5173, 5500, 3000) or file://, target backend on 8000
+      return `http://127.0.0.1:8000${endpoint}`;
+    }
 
     function Navbar({ activeTab, setActiveTab }) {
       return (
@@ -441,79 +455,14 @@
     }
 
     function ChatbotLanding({ onNavigateTab }) {
-      const STORAGE_KEY = 'amicare_chat_session_v1';
-      const [messages, setMessages] = useState(() => {
-        try {
-          const saved = localStorage.getItem(STORAGE_KEY);
-          if (saved) return JSON.parse(saved);
-        } catch (e) {
-          console.warn('Failed to load chat from localStorage', e);
+      const [messages, setMessages] = useState([
+        {
+          id: 1,
+          sender: 'bot',
+          text: "Welcome to AmiCare! I am your confidential AI mental well-being assistant. I chat with you to listen and continuously self-determine your emotional state of being as we talk. How are you feeling today?",
+          suggested: ["Scan My Face for Stress", "I feel stressed about my exams", "I'm having trouble sleeping", "Start Stress Self-Check"]
         }
-        return [
-          {
-            id: 1,
-            sender: 'bot',
-            text: "Welcome to AmiCare! I am your confidential AI mental well-being assistant. I chat with you to listen and continuously self-determine your emotional state of being as we talk. How are you feeling today?",
-            suggested: ["Scan My Face for Stress", "I feel stressed about my exams", "I'm having trouble sleeping", "Start Stress Self-Check"]
-          }
-        ];
-      });
-
-      // Persist to localStorage on update
-      useEffect(() => {
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-        } catch (e) {
-          console.warn('Failed to save chat to localStorage', e);
-        }
-      }, [messages]);
-
-      const handleClearChat = () => {
-        if (window.confirm("Are you sure you want to clear your current conversation history? This cannot be undone.")) {
-          try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
-          setMessages([
-            {
-              id: Date.now(),
-              sender: 'bot',
-              text: "Conversation reset. Welcome back to AmiCare! How are you feeling right now?",
-              suggested: ["Scan My Face for Stress", "I feel stressed about my exams", "Start Stress Self-Check"]
-            }
-          ]);
-        }
-      };
-
-      const handleExportSummary = () => {
-        const now = new Date();
-        const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-        const transcript = messages.map(m => `**${m.sender === 'bot' ? 'AmiCare AI' : 'Student'}**: ${m.text}`).join('\n\n');
-        const report = `# AmiCare — Student Wellness Session Report
-**Date**: ${dateStr}
-**Session Baseline Assessment**: ${stateLabel}
-**Stress Severity Level**: ${severity}
-${answers && answers.length > 0 ? `**PSS-4 Assessment**: Completed ${answers.length} items\n` : ''}
-
----
-
-## 🔒 Confidential Non-Diagnostic Summary
-*Disclaimer: This wellness summary is generated for personal student reflection and self-care tracking. It does NOT constitute a clinical psychological assessment or diagnostic medical record.*
-
-### Conversation Transcript:
-${transcript}
-
----
-
-### Emergency Crisis Resources:
-- **Tele-MANAS (Govt. of India)**: 14416 / 1800-891-4416 (24/7 Toll-Free)
-- **KIRAN Mental Health Line**: 1800-599-0019 (24/7 Toll-Free)
-- **Vandrevala Foundation**: +91 9999 666 555 (24/7 Free)
-- **Student Campus Line**: 1800-200-CAMPUS
-`;
-        const blob = new Blob([report], { type: 'text/markdown;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `AmiCare_Session_Summary_${now.toISOString().slice(0,10)}.md`;
-        link.click();
-      };
+      ]);
       const [input, setInput] = useState('');
       const [isTyping, setIsTyping] = useState(false);
       const [stateLabel, setStateLabel] = useState("Baseline / Active Listening");
@@ -562,7 +511,7 @@ ${transcript}
         }
 
         try {
-          const res = await fetch('/api/chat/message', {
+          const res = await fetch(getApiUrl('/api/chat/message'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: msg })
@@ -1173,7 +1122,8 @@ ${transcript}
         setLoading(true);
         setErrorMsg(null);
         try {
-          const res = await fetch('/api/face-scan/analyze-frame', {
+          const targetUrl = getApiUrl('/api/face-scan/analyze-frame');
+          const res = await fetch(targetUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ image: b64Data })
@@ -1194,7 +1144,7 @@ ${transcript}
           }
         } catch (e) {
           console.error("Backend scan error:", e);
-          setErrorMsg("Failed to communicate with AmiCare OpenCV backend. Please ensure the backend is running.");
+          setErrorMsg("Failed to communicate with AmiCare OpenCV backend. Please ensure the backend is running on http://127.0.0.1:8000.");
           setStatusMsg(null);
         } finally {
           setLoading(false);
