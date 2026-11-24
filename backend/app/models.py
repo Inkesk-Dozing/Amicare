@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, Float
 from datetime import datetime
 from app.database import Base
 
@@ -34,3 +34,22 @@ class Question(Base):
     prompt = Column(Text, nullable=False)
     is_reverse_scored = Column(Boolean, default=False)
     options_json = Column(Text, nullable=False)  # JSON array of options
+
+class FaceScanRecord(Base):
+    __tablename__ = "face_scans"
+
+    id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(String(100), default="default", index=True)
+    face_detected = Column(Boolean, default=False)
+    emotion = Column(String(50), nullable=True) # Happy, Well, Sad, Stressed
+    state_label = Column(String(100), nullable=True)
+    stress_score = Column(Integer, default=0)
+    stress_level = Column(String(50), nullable=True)
+    confidence = Column(Float, default=0.0)
+    forehead_tension_percent = Column(Float, nullable=True)
+    brow_furrow_percent = Column(Float, nullable=True)
+    smile_ratio = Column(Float, nullable=True)
+    eye_alertness_percent = Column(Float, nullable=True)
+    recommendation = Column(Text, nullable=True)
+    suggested_action = Column(String(255), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)

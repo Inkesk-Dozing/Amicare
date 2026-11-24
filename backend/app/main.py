@@ -20,15 +20,12 @@ app = FastAPI(
     version="1.1.0"
 )
 
-# CORS middleware with strict origin verification & credential safety
-cors_env = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8000,http://127.0.0.1:8000,http://localhost:3000,http://127.0.0.1:3000,https://amicare.vercel.app")
-origins = [o.strip() for o in cors_env.split(",") if o.strip() and o.strip() != "*"]
-
+# CORS middleware: Allow all origins for anonymous, zero-friction client access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
