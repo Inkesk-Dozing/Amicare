@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
+from datetime import datetime
 
 class QuestionOption(BaseModel):
     label: str
@@ -54,3 +55,23 @@ class EvaluationResult(BaseModel):
     summary: str
     recommendations: List[str]
     recommended_helplines: List[HelplineSchema]
+
+class FaceScanRecordSchema(BaseModel):
+    id: int
+    session_id: str
+    face_detected: bool
+    emotion: Optional[str] = None
+    state_label: Optional[str] = None
+    stress_score: int
+    stress_level: Optional[str] = None
+    confidence: float
+    forehead_tension_percent: Optional[float] = None
+    brow_furrow_percent: Optional[float] = None
+    smile_ratio: Optional[float] = None
+    eye_alertness_percent: Optional[float] = None
+    recommendation: Optional[str] = None
+    suggested_action: Optional[str] = None
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
