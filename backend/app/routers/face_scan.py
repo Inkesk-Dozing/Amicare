@@ -18,6 +18,8 @@ analyzer = OpenCVStressAnalyzer()
 class FrameAnalysisRequest(BaseModel):
     image: str # Base64 encoded image string (e.g. data:image/jpeg;base64,...)
     session_id: Optional[str] = "webcam-session"
+    save_to_db: bool = True
+    smooth: bool = False
 
 class IndicatorsResponse(BaseModel):
     forehead_tension_percent: float
@@ -43,6 +45,32 @@ class FaceScanResponse(BaseModel):
     record_id: Optional[int] = None
     database_synced: Optional[bool] = False
     recommended_helplines: Optional[List[Dict[str, Any]]] = []
+    inference_ms: Optional[float] = 0.0
+
+def _attach_recommended_helplines(result: Dict[str, Any], db: Session):
+    """Attaches crisis helpline referrals when elevated stress or sadness is detected."""
+    if result.get("emotion") in ["Stressed", "Sad"] or result.get("stress_score", 0) >= 50:
+        try:
+            db_helplines = db.query(Helpline).limit(3).all()
+            result["recommended_helplines"] = [
+                {
+                    "id": h.id,
+                    "name": h.name,
+                    "number": h.number,
+                    "category": h.category,
+                    "description": h.description,
+                    "hours": h.hours,
+                    "is_toll_free": h.is_toll_free,
+                    "languages": h.languages,
+                    "website": h.website
+                }
+                for h in db_helplines
+            ]
+        except Exception as err:
+            print(f"[OpenCV Helpline Fetch Note]: {err}")
+            result["recommended_helplines"] = []
+    else:
+        result["recommended_helplines"] = []
 
 def _save_scan_to_db(result: Dict[str, Any], session_id: str, db: Session):
     """Saves OpenCV stress scan diagnostics directly into SQLite database."""
@@ -72,29 +100,7 @@ def _save_scan_to_db(result: Dict[str, Any], session_id: str, db: Session):
         db.rollback()
         result["database_synced"] = False
 
-    # Connect OpenCV results with referral helpline directory from database
-    if result.get("emotion") in ["Stressed", "Sad"] or result.get("stress_score", 0) >= 50:
-        try:
-            db_helplines = db.query(Helpline).limit(3).all()
-            result["recommended_helplines"] = [
-                {
-                    "id": h.id,
-                    "name": h.name,
-                    "number": h.number,
-                    "category": h.category,
-                    "description": h.description,
-                    "hours": h.hours,
-                    "is_toll_free": h.is_toll_free,
-                    "languages": h.languages,
-                    "website": h.website
-                }
-                for h in db_helplines
-            ]
-        except Exception as err:
-            print(f"[OpenCV Helpline Fetch Note]: {err}")
-            result["recommended_helplines"] = []
-    else:
-        result["recommended_helplines"] = []
+    _attach_recommended_helplines(result, db)
 
 MAX_PAYLOAD_BYTES = 10 * 1024 * 1024  # 10 MB payload boundary
 ALLOWED_UPLOAD_MIME_TYPES = {"image/jpeg", "image/png", "image/webp", "image/jpg"}
@@ -116,8 +122,16 @@ def analyze_camera_frame(payload: FrameAnalysisRequest, db: Session = Depends(ge
     if bgr_img is None:
         raise HTTPException(status_code=400, detail="Invalid base64 image data.")
 
-    result = analyzer.analyze_frame(bgr_img)
-    _save_scan_to_db(result, payload.session_id or "webcam-session", db)
+    result = analyzer.analyze_frame(
+        bgr_img,
+        session_id=payload.session_id,
+        smooth=payload.smooth,
+    )
+    if payload.save_to_db:
+        _save_scan_to_db(result, payload.session_id or "webcam-session", db)
+    else:
+        result["database_synced"] = False
+        _attach_recommended_helplines(result, db)
     return result
 
 @router.post("/upload", response_model=FaceScanResponse)
