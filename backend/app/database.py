@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 # Database URL default to SQLite local file (or /tmp on read-only serverless runtimes like Vercel)
 _default_db_url = (
     "sqlite:////tmp/amicare.db"
-    if os.getenv("VERCEL")
+    if (os.getenv("VERCEL") or os.getenv("VERCEL_ENV"))
     else "sqlite:///./amicare.db"
 )
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", _default_db_url)
