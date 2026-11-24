@@ -20,6 +20,7 @@ class FrameAnalysisRequest(BaseModel):
     session_id: Optional[str] = "webcam-session"
     save_to_db: bool = True
     smooth: bool = False
+    return_image: bool = True
 
 class IndicatorsResponse(BaseModel):
     forehead_tension_percent: float
@@ -46,6 +47,8 @@ class FaceScanResponse(BaseModel):
     database_synced: Optional[bool] = False
     recommended_helplines: Optional[List[Dict[str, Any]]] = []
     inference_ms: Optional[float] = 0.0
+    frame_size: Optional[Dict[str, int]] = None
+    geometry: Optional[Dict[str, Any]] = None
 
 def _attach_recommended_helplines(result: Dict[str, Any], db: Session):
     """Attaches crisis helpline referrals when elevated stress or sadness is detected."""
@@ -126,6 +129,7 @@ def analyze_camera_frame(payload: FrameAnalysisRequest, db: Session = Depends(ge
         bgr_img,
         session_id=payload.session_id,
         smooth=payload.smooth,
+        return_image=payload.return_image,
     )
     if payload.save_to_db:
         _save_scan_to_db(result, payload.session_id or "webcam-session", db)
