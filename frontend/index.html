@@ -2322,10 +2322,16 @@
         const [viewMode, setViewMode] = useState("live"); // 'live' or 'annotated'
         const [flash, setFlash] = useState(false);
         const [lastCaptureTime, setLastCaptureTime] = useState(null);
+        const [liveAutoScan, setLiveAutoScan] = useState(false);
+        const [liveHistory, setLiveHistory] = useState([]);
 
         const videoRef = useRef(null);
         const canvasRef = useRef(null);
         const streamRef = useRef(null);
+        const liveActiveRef = useRef(false);
+        const liveSessionIdRef = useRef(
+          `live-${Math.random().toString(36).slice(2, 10)}`,
+        );
 
         const demoSamples = [
           {
@@ -2404,7 +2410,13 @@
           }
         };
 
+        const stopLiveScan = () => {
+          liveActiveRef.current = false;
+          setLiveAutoScan(false);
+        };
+
         const stopCamera = () => {
+          stopLiveScan();
           if (streamRef.current) {
             streamRef.current.getTracks().forEach((track) => track.stop());
             streamRef.current = null;
@@ -2414,6 +2426,58 @@
           }
           setCameraActive(false);
           setStatusMsg(null);
+        };
+
+        const captureVideoFrameB64 = () => {
+          if (!videoRef.current || !canvasRef.current) return null;
+          const video = videoRef.current;
+          const canvas = canvasRef.current;
+          if (video.videoWidth === 0 || video.videoHeight === 0) return null;
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          return canvas.toDataURL("image/jpeg", 0.82);
+        };
+
+        const runLiveLoop = async () => {
+          if (!liveActiveRef.current) return;
+          const b64 = captureVideoFrameB64();
+          if (b64) {
+            await sendFrameToBackend(b64, null, {
+              saveToDb: false,
+              smooth: true,
+              silent: true,
+              sessionId: liveSessionIdRef.current,
+            });
+          }
+          if (liveActiveRef.current) {
+            setTimeout(runLiveLoop, 220);
+          }
+        };
+
+        const toggleLiveScan = () => {
+          if (liveActiveRef.current) {
+            stopLiveScan();
+            // Persist final reading from live session
+            const b64 = captureVideoFrameB64();
+            if (b64) {
+              sendFrameToBackend(b64, null, {
+                saveToDb: true,
+                smooth: true,
+                sessionId: liveSessionIdRef.current,
+              });
+            }
+          } else {
+            setErrorMsg(null);
+            setViewMode("annotated");
+            liveActiveRef.current = true;
+            setLiveAutoScan(true);
+            setStatusMsg(
+              "Live OpenCV analytics active — streaming frames for real-time HUD & stress tracking.",
+            );
+            runLiveLoop();
+          }
         };
 
         // Trigger photo capture with flash effect and send to backend
@@ -2842,64 +2906,90 @@
           });
         };
 
-        const sendFrameToBackend = async (b64Data) => {
+        const sendFrameToBackend = async (
+          b64Data,
+          fallbackDiagnostic = null,
+          options = {},
+        ) => {
           if (!b64Data) return;
-          setLoading(true);
+          const {
+            saveToDb = true,
+            smooth = false,
+            silent = false,
+            sessionId = "webcam-session",
+          } = options;
+          if (!silent) setLoading(true);
           setErrorMsg(null);
           try {
             const targetUrl = getApiUrl("/api/face-scan/analyze-frame");
             const res = await fetch(targetUrl, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ image: b64Data }),
+              body: JSON.stringify({
+                image: b64Data,
+                session_id: sessionId,
+                save_to_db: saveToDb,
+                smooth,
+              }),
             });
             if (res.ok) {
               const data = await res.json();
               setScanResult(data);
               setViewMode("annotated");
               if (data.face_detected) {
-                setStatusMsg(
-                  `✓ Scan complete! Face detected: ${data.emotion} (${data.stress_score}% stress)`,
-                );
-              } else {
+                setLiveHistory((prev) => [
+                  ...prev.slice(-14),
+                  {
+                    score: data.stress_score,
+                    emotion: data.emotion,
+                    time: new Date().toLocaleTimeString(),
+                  },
+                ]);
+                if (!silent) {
+                  setStatusMsg(
+                    `✓ Scan complete! Face detected: ${data.emotion} (${data.stress_score}% stress)`,
+                  );
+                }
+              } else if (!silent) {
                 setStatusMsg(
                   "No face detected in the captured photo. Please face the camera directly in good lighting.",
                 );
               }
-            } else {
-              const err = await res.json();
-              setErrorMsg(err.detail || "Error evaluating face frame.");
-              setStatusMsg(null);
               return;
             }
             // If backend returned non-200 (e.g. 404 on Vercel static deployment), fallback to client-side HUD analysis
-            console.log(
+            console.warn(
               "Backend returned non-200, activating client-side OpenCV HUD analysis...",
             );
-            const clientResult = await analyzeFrameClientSide(b64Data);
+            const clientResult = await analyzeFrameClientSide(
+              b64Data,
+              fallbackDiagnostic,
+            );
             setScanResult(clientResult);
             setViewMode("annotated");
-            setStatusMsg(
-              `✓ Scan complete! Face examined: ${clientResult.emotion} (${clientResult.stress_score}% stress)`,
-            );
+            if (!silent) {
+              setStatusMsg(
+                `✓ Scan complete! Face examined: ${clientResult.emotion} (${clientResult.stress_score}% stress)`,
+              );
+            }
           } catch (e) {
-            console.error("Backend scan error:", e);
-            setErrorMsg(
-              "Failed to communicate with AmiCare OpenCV backend. Please ensure the backend is running on http://127.0.0.1:8000.",
-            );
-            setStatusMsg(null);
             console.warn(
               "Backend unreachable, activating client-side OpenCV HUD analysis:",
               e,
             );
-            const clientResult = await analyzeFrameClientSide(b64Data);
+            const clientResult = await analyzeFrameClientSide(
+              b64Data,
+              fallbackDiagnostic,
+            );
             setScanResult(clientResult);
             setViewMode("annotated");
-            setStatusMsg(
-              `✓ Scan complete! Face examined: ${clientResult.emotion} (${clientResult.stress_score}% stress)`,
-            );
+            if (!silent) {
+              setStatusMsg(
+                `✓ Scan complete! Face examined: ${clientResult.emotion} (${clientResult.stress_score}% stress)`,
+              );
+            }
           } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
           }
         };
 
@@ -2910,9 +3000,6 @@
           setErrorMsg(null);
           setLoading(true);
           setStatusMsg(`Loading ${demo.label} and analyzing with OpenCV...`);
-          setStatusMsg(
-            `Loading ${demo.label} and examining facial biometrics...`,
-          );
           setViewMode("annotated");
 
           const diagnostic = DEMO_DIAGNOSTICS[demo.id] || null;
@@ -2920,37 +3007,27 @@
             const res = await fetch(demo.file);
             if (!res.ok) throw new Error(`Could not load ${demo.file}`);
             const blob = await res.blob();
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              const b64 = reader.result;
-              const timeStr = new Date().toLocaleTimeString();
-              setLastCaptureTime(timeStr);
-              sendFrameToBackend(b64);
-            };
-            reader.readAsDataURL(blob);
-            const clientResult = await analyzeFrameClientSide(
-              demo.file,
-              diagnostic,
-            );
+            const b64 = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onloadend = () => resolve(reader.result);
+              reader.onerror = reject;
+              reader.readAsDataURL(blob);
+            });
             const timeStr = new Date().toLocaleTimeString();
             setLastCaptureTime(timeStr);
-            setScanResult(clientResult);
-            setStatusMsg(
-              `✓ Demonstration analyzed! Face status: ${clientResult.emotion} (${clientResult.stress_score}% stress)`,
-            );
+            await sendFrameToBackend(b64, diagnostic, { saveToDb: true });
           } catch (err) {
             console.error("Demo load error:", err);
-            setErrorMsg(`Could not load demo image ${demo.file}.`);
-            console.error("Demo load note:", err);
             if (diagnostic) {
               setScanResult({ ...diagnostic, annotated_image: demo.file });
               setStatusMsg(
                 `✓ Demonstration loaded: ${diagnostic.emotion} (${diagnostic.stress_score}% stress)`,
               );
+            } else {
+              setErrorMsg(`Could not load demo image ${demo.file}.`);
+              setStatusMsg(null);
             }
-          } finally {
             setLoading(false);
-            setStatusMsg(null);
           }
         };
 
@@ -2985,6 +3062,7 @@
           if (em === "Happy") return "Happy & Joyful 😄";
           if (em === "Well") return "Well & Balanced 🌿";
           if (em === "Sad") return "Sad / Subdued 😢";
+          if (em === "Angry") return "Angry / Acute Distress 😠";
           if (em === "Stressed") return "Stressed / Elevated Tension ⚡";
           return "Analyzing Biometrics...";
         };
@@ -3206,8 +3284,23 @@
                       <>
                         <button
                           className="btn-primary"
+                          onClick={toggleLiveScan}
+                          style={{
+                            background: liveAutoScan ? "#DC2626" : "#0D9488",
+                            boxShadow: liveAutoScan
+                              ? "0 4px 14px rgba(220,38,38,0.3)"
+                              : "0 4px 14px rgba(13,148,136,0.3)",
+                          }}
+                        >
+                          <SparklesIcon />{" "}
+                          {liveAutoScan
+                            ? "Stop Live Auto-Scan"
+                            : "Start Live Auto-Scan"}
+                        </button>
+                        <button
+                          className="btn-primary"
                           onClick={captureAndAnalyze}
-                          disabled={loading}
+                          disabled={loading || liveAutoScan}
                           style={{
                             background: "#2563EB",
                             boxShadow: "0 4px 14px rgba(37,99,235,0.3)",
@@ -3404,6 +3497,49 @@
                             }}
                           />
                         </div>
+                        {liveHistory.length > 1 && (
+                          <div style={{ marginTop: "1rem" }}>
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                fontSize: "0.75rem",
+                                color: "var(--text-muted)",
+                                marginBottom: "0.35rem",
+                              }}
+                            >
+                              <span>Live Stress Trend (Last {liveHistory.length} scans)</span>
+                              {scanResult.inference_ms > 0 && (
+                                <span>OpenCV: {scanResult.inference_ms} ms</span>
+                              )}
+                            </div>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "flex-end",
+                                gap: "4px",
+                                height: "38px",
+                                padding: "4px 6px",
+                                background: "#F1F5F9",
+                                borderRadius: "6px",
+                              }}
+                            >
+                              {liveHistory.map((item, idx) => (
+                                <div
+                                  key={idx}
+                                  title={`${item.time}: ${item.emotion} (${item.score}%)`}
+                                  style={{
+                                    flex: 1,
+                                    height: `${Math.max(15, item.score)}%`,
+                                    backgroundColor: getStressColor(item.score),
+                                    borderRadius: "3px 3px 0 0",
+                                    transition: "height 0.25s ease",
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -3429,6 +3565,42 @@
                           fontSize: "0.9rem",
                         }}
                       >
+                        <div>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              marginBottom: "0.25rem",
+                            }}
+                          >
+                            <span style={{ color: "var(--text-secondary)" }}>
+                              Mouth Openness / Jaw Strain
+                            </span>
+                            <span style={{ fontWeight: 700 }}>
+                              {scanResult.indicators.mouth_openness_percent || 0}%
+                            </span>
+                          </div>
+                          <div
+                            style={{
+                              height: "6px",
+                              background: "#E2E8F0",
+                              borderRadius: "4px",
+                              overflow: "hidden",
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: `${Math.min(100, scanResult.indicators.mouth_openness_percent || 0)}%`,
+                                height: "100%",
+                                background:
+                                  (scanResult.indicators.mouth_openness_percent || 0) >= 48
+                                    ? "#DC2626"
+                                    : "#0D9488",
+                              }}
+                            />
+                          </div>
+                        </div>
+
                         <div>
                           <div
                             style={{
