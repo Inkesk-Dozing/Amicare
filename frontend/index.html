@@ -2327,6 +2327,7 @@
 
         const videoRef = useRef(null);
         const canvasRef = useRef(null);
+        const overlayCanvasRef = useRef(null);
         const streamRef = useRef(null);
         const liveActiveRef = useRef(false);
         const liveSessionIdRef = useRef(
@@ -2410,9 +2411,124 @@
           }
         };
 
+        const clearLiveOverlay = () => {
+          const ov = overlayCanvasRef.current;
+          if (ov) {
+            const ctx = ov.getContext("2d");
+            ctx.clearRect(0, 0, ov.width, ov.height);
+          }
+        };
+
+        const drawLiveOverlay = (data) => {
+          const ov = overlayCanvasRef.current;
+          const video = videoRef.current;
+          if (!ov || !video || !video.videoWidth || !video.videoHeight) return;
+
+          const dw = video.clientWidth || video.videoWidth;
+          const dh = video.clientHeight || video.videoHeight;
+          if (ov.width !== dw || ov.height !== dh) {
+            ov.width = dw;
+            ov.height = dh;
+          }
+          const ctx = ov.getContext("2d");
+          ctx.clearRect(0, 0, dw, dh);
+
+          if (!data || !data.face_detected || !data.geometry || !data.frame_size) {
+            // Subtle alignment guide when face not detected
+            ctx.strokeStyle = "rgba(245, 158, 11, 0.75)";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(dw / 2, dh / 2, dw * 0.2, dh * 0.3, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            return;
+          }
+
+          const sx = dw / data.frame_size.width;
+          const sy = dh / data.frame_size.height;
+          const [rawBx, rawBy, rawBw, rawBh] = data.geometry.box;
+          const bx = rawBx * sx;
+          const by = rawBy * sy;
+          const bw = rawBw * sx;
+          const bh = rawBh * sy;
+
+          const em = data.emotion;
+          const hudColor =
+            em === "Happy"
+              ? "#22C55E"
+              : em === "Well"
+                ? "#1B4D3E"
+                : em === "Sad"
+                  ? "#D97706"
+                  : "#EF4444";
+          const badgeText =
+            em === "Happy"
+              ? "HAPPY : RELAXED"
+              : em === "Well"
+                ? "WELL : BALANCED"
+                : em === "Sad"
+                  ? "SAD : SUBDUED"
+                  : em === "Angry"
+                    ? "ANGRY : ACUTE DISTRESS"
+                    : "STRESSED : HIGH STRAIN";
+
+          // Corner brackets
+          const cLen = Math.min(bw, bh) * 0.22;
+          ctx.strokeStyle = hudColor;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(bx, by + cLen); ctx.lineTo(bx, by); ctx.lineTo(bx + cLen, by);
+          ctx.moveTo(bx + bw - cLen, by); ctx.lineTo(bx + bw, by); ctx.lineTo(bx + bw, by + cLen);
+          ctx.moveTo(bx, by + bh - cLen); ctx.lineTo(bx, by + bh); ctx.lineTo(bx + cLen, by + bh);
+          ctx.moveTo(bx + bw - cLen, by + bh); ctx.lineTo(bx + bw, by + bh); ctx.lineTo(bx + bw, by + bh - cLen);
+          ctx.stroke();
+
+          // Landmarks
+          const pt = (p) => [p[0] * sx, p[1] * sy];
+          const [rex, rey] = pt(data.geometry.r_eye);
+          const [lex, ley] = pt(data.geometry.l_eye);
+          const [nx, ny] = pt(data.geometry.nose);
+          const [rmx, rmy] = pt(data.geometry.r_mouth);
+          const [lmx, lmy] = pt(data.geometry.l_mouth);
+
+          ctx.fillStyle = "#FACC15";
+          ctx.beginPath(); ctx.arc(rex, rey, 4, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(lex, ley, 4, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = "#38BDF8";
+          ctx.beginPath(); ctx.arc(nx, ny, 3, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = hudColor;
+          ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(rmx, rmy); ctx.lineTo(lmx, lmy); ctx.stroke();
+
+          // Top status pill
+          const badgeY = Math.max(28, by - 10);
+          const badgeW = Math.max(195, bw);
+          ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+          ctx.fillRect(bx, badgeY - 24, badgeW, 26);
+          ctx.strokeStyle = hudColor;
+          ctx.lineWidth = 1;
+          ctx.strokeRect(bx, badgeY - 24, badgeW, 26);
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = "bold 12px Inter, sans-serif";
+          ctx.fillText(`AmiCare Live: ${badgeText}`, bx + 8, badgeY - 7);
+
+          // Bottom stress bar
+          const gaugeY = Math.min(dh - 16, by + bh + 22);
+          ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+          ctx.fillRect(bx, gaugeY - 18, badgeW, 30);
+          ctx.fillStyle = "#E2E8F0";
+          ctx.font = "11px Inter, sans-serif";
+          const tens = Math.round(data.indicators?.forehead_tension_percent || 0);
+          ctx.fillText(`Stress: ${data.stress_score}% | Tension: ${tens}%`, bx + 8, gaugeY - 5);
+          ctx.fillStyle = "#334155";
+          ctx.fillRect(bx + 8, gaugeY + 1, badgeW - 16, 6);
+          ctx.fillStyle = hudColor;
+          ctx.fillRect(bx + 8, gaugeY + 1, (badgeW - 16) * (data.stress_score / 100), 6);
+        };
+
         const stopLiveScan = () => {
           liveActiveRef.current = false;
           setLiveAutoScan(false);
+          clearLiveOverlay();
         };
 
         const stopCamera = () => {
@@ -2428,31 +2544,33 @@
           setStatusMsg(null);
         };
 
-        const captureVideoFrameB64 = () => {
+        const captureVideoFrameB64 = (maxWidth = 320, quality = 0.65) => {
           if (!videoRef.current || !canvasRef.current) return null;
           const video = videoRef.current;
           const canvas = canvasRef.current;
           if (video.videoWidth === 0 || video.videoHeight === 0) return null;
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
+          const scale = maxWidth && video.videoWidth > maxWidth ? maxWidth / video.videoWidth : 1;
+          canvas.width = Math.round(video.videoWidth * scale);
+          canvas.height = Math.round(video.videoHeight * scale);
           const ctx = canvas.getContext("2d");
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          return canvas.toDataURL("image/jpeg", 0.82);
+          return canvas.toDataURL("image/jpeg", quality);
         };
 
         const runLiveLoop = async () => {
           if (!liveActiveRef.current) return;
-          const b64 = captureVideoFrameB64();
+          const b64 = captureVideoFrameB64(320, 0.65);
           if (b64) {
             await sendFrameToBackend(b64, null, {
               saveToDb: false,
               smooth: true,
               silent: true,
+              returnImage: false,
               sessionId: liveSessionIdRef.current,
             });
           }
           if (liveActiveRef.current) {
-            setTimeout(runLiveLoop, 220);
+            setTimeout(runLiveLoop, 40);
           }
         };
 
@@ -2460,21 +2578,23 @@
           if (liveActiveRef.current) {
             stopLiveScan();
             // Persist final reading from live session
-            const b64 = captureVideoFrameB64();
+            const b64 = captureVideoFrameB64(640, 0.85);
             if (b64) {
+              setViewMode("annotated");
               sendFrameToBackend(b64, null, {
                 saveToDb: true,
                 smooth: true,
+                returnImage: true,
                 sessionId: liveSessionIdRef.current,
               });
             }
           } else {
             setErrorMsg(null);
-            setViewMode("annotated");
+            setViewMode("live");
             liveActiveRef.current = true;
             setLiveAutoScan(true);
             setStatusMsg(
-              "Live OpenCV analytics active — streaming frames for real-time HUD & stress tracking.",
+              "Live OpenCV analytics active — 60fps viewfinder with real-time facial HUD overlay.",
             );
             runLiveLoop();
           }
@@ -2916,6 +3036,7 @@
             saveToDb = true,
             smooth = false,
             silent = false,
+            returnImage = true,
             sessionId = "webcam-session",
           } = options;
           if (!silent) setLoading(true);
@@ -2930,12 +3051,17 @@
                 session_id: sessionId,
                 save_to_db: saveToDb,
                 smooth,
+                return_image: returnImage,
               }),
             });
             if (res.ok) {
               const data = await res.json();
               setScanResult(data);
-              setViewMode("annotated");
+              if (!returnImage && liveActiveRef.current) {
+                drawLiveOverlay(data);
+              } else {
+                setViewMode("annotated");
+              }
               if (data.face_detected) {
                 setLiveHistory((prev) => [
                   ...prev.slice(-14),
@@ -3148,6 +3274,23 @@
                     style={{
                       display:
                         cameraActive && (viewMode === "live" || !scanResult)
+                          ? "block"
+                          : "none",
+                    }}
+                  />
+
+                  {/* Transparent 60fps OpenCV HUD overlay canvas for Live Auto-Scan */}
+                  <canvas
+                    ref={overlayCanvasRef}
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      width: "100%",
+                      height: "100%",
+                      pointerEvents: "none",
+                      zIndex: 15,
+                      display:
+                        cameraActive && liveAutoScan && viewMode === "live"
                           ? "block"
                           : "none",
                     }}

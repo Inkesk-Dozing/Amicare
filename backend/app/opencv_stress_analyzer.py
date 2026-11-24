@@ -93,6 +93,7 @@ class OpenCVStressAnalyzer:
         img: np.ndarray,
         session_id: Optional[str] = None,
         smooth: bool = False,
+        return_image: bool = True,
     ) -> Dict[str, Any]:
         """
         Runs OpenCV facial stress & emotion examination on a BGR frame.
@@ -129,8 +130,11 @@ class OpenCVStressAnalyzer:
             return self._fallback_analysis(img)
 
         if faces is None or len(faces) == 0:
-            annotated = img.copy()
-            self._draw_no_face_hud(annotated)
+            annotated_b64 = None
+            if return_image:
+                annotated = img.copy()
+                self._draw_no_face_hud(annotated)
+                annotated_b64 = self.encode_image_to_base64(annotated)
             elapsed_ms = round((time.perf_counter() - t0) * 1000.0, 1)
             return {
                 "face_detected": False,
@@ -141,7 +145,9 @@ class OpenCVStressAnalyzer:
                 "stress_level": "None",
                 "primary_indicator": "No face detected in frame",
                 "message": "Please face the camera directly in good lighting.",
-                "annotated_image": self.encode_image_to_base64(annotated),
+                "annotated_image": annotated_b64,
+                "frame_size": {"width": orig_w, "height": orig_h},
+                "geometry": None,
                 "indicators": {
                     "forehead_tension_percent": 0.0,
                     "smile_ratio": 0.0,
@@ -228,19 +234,22 @@ class OpenCVStressAnalyzer:
             mouth_strain=mouth_strain,
         )
 
-        # 8. Render HUD Visuals on Frame
-        annotated = img.copy()
-        self._render_opencv_hud(
-            img=annotated,
-            box=(bx, by, bw, bh),
-            r_eye=r_eye,
-            l_eye=l_eye,
-            nose=nose,
-            r_mouth=r_mouth,
-            l_mouth=l_mouth,
-            classification=classification,
-            forehead_tension=forehead_tension,
-        )
+        # 8. Render HUD Visuals on Frame (skipped in lightweight live-overlay mode)
+        annotated_b64 = None
+        if return_image:
+            annotated = img.copy()
+            self._render_opencv_hud(
+                img=annotated,
+                box=(bx, by, bw, bh),
+                r_eye=r_eye,
+                l_eye=l_eye,
+                nose=nose,
+                r_mouth=r_mouth,
+                l_mouth=l_mouth,
+                classification=classification,
+                forehead_tension=forehead_tension,
+            )
+            annotated_b64 = self.encode_image_to_base64(annotated)
 
         elapsed_ms = round((time.perf_counter() - t0) * 1000.0, 1)
 
@@ -262,9 +271,18 @@ class OpenCVStressAnalyzer:
                 "mouth_width_px": round(mouth_width, 1),
                 "haar_smile_verified": haar_smile,
             },
+            "frame_size": {"width": orig_w, "height": orig_h},
+            "geometry": {
+                "box": [int(bx), int(by), int(bw), int(bh)],
+                "r_eye": [int(r_eye[0]), int(r_eye[1])],
+                "l_eye": [int(l_eye[0]), int(l_eye[1])],
+                "nose": [int(nose[0]), int(nose[1])],
+                "r_mouth": [int(r_mouth[0]), int(r_mouth[1])],
+                "l_mouth": [int(l_mouth[0]), int(l_mouth[1])],
+            },
             "recommendation": classification["recommendation"],
             "suggested_action": classification["suggested_action"],
-            "annotated_image": self.encode_image_to_base64(annotated),
+            "annotated_image": annotated_b64,
             "inference_ms": elapsed_ms,
         }
 
